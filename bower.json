@@ -1,0 +1,35 @@
+{
+  "name": "Interdimensional",
+  "version": "0.0.1",
+  "homepage": "http://vodkabears.github.io/interdimensional/",
+  "authors": [
+    "Ilya Makarov <dfrost.00@gmail.com>"
+  ],
+  "description": "Spatial scrolling for your web pages.",
+  "main": [
+    "dist/interdimensional.js",
+    "dist/interdimensional.css"
+  ],
+  "ignore": [
+    "**/.*",
+    "examples/",
+    "src/",
+    "tests/",
+    "*.md",
+    "Gruntfile.js",
+    "package.json"
+  ],
+  "keywords": [
+    "spatial",
+    "scrolling",
+    "scroll",
+    "mobile",
+    "device",
+    "orientation",
+    "acceleration",
+    "motion",
+    "gyroscope",
+    "ui"
+  ],
+  "license": "MIT"
+}
