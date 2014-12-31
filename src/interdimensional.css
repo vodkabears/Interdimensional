@@ -1,0 +1,10 @@
+.interdimensional-control {
+  z-index: 10000;
+
+  width: 150px;
+  height: 150px;
+
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.05);
+  transition: background 0.3s ease-out;
+}
