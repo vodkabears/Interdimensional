@@ -83,6 +83,15 @@ module.exports = function(grunt) {
       }
     },
 
+    autoprefixer: {
+      dist: {
+        src: 'dist/interdimensional.css'
+      },
+      options: {
+        browsers: ['> 0.1%']
+      }
+    },
+
     // Minify definitions
     uglify: {
       target: {
@@ -124,6 +133,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-autoprefixer');
   grunt.loadNpmTasks('grunt-csscomb');
   grunt.loadNpmTasks('grunt-githooks');
   grunt.loadNpmTasks('grunt-jscs');
@@ -137,7 +147,7 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('build', [
-    'concat', 'uglify'
+    'concat', 'autoprefixer', 'uglify'
   ]);
 
   grunt.registerTask('default', [
