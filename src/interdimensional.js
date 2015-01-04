@@ -1,48 +1,81 @@
 !(function(window, document) {
   'use strict';
 
+  var isCharged = false;
+  var control;
+
+  function onTouchStart() {
+    control.classList.add('interdimensional-control-is-active');
+  }
+
+  function onTouchMove(e) {
+    var touch = e.changedTouches[0];
+
+    e.preventDefault();
+
+    control.style.top = touch.clientY + 'px';
+    control.style.left = touch.clientX + 'px';
+  }
+
+  function onTouchEnd() {
+    control.classList.remove('interdimensional-control-is-active');
+  }
+
   function Interdimensional() {}
 
-  Interdimensional.prototype.charge = function() {
-    var idim = this;
+  Interdimensional.charge = function() {
+    if (isCharged) {
+      return this;
+    }
 
-    idim.control = document.createElement('div');
-    idim.control.className = 'interdimensional-control';
-    document.body.appendChild(idim.control);
+    isCharged = true;
+
+    control = document.createElement('div');
+    control.className = 'interdimensional-control';
+    document.body.appendChild(control);
 
     // Set a starting position
-    idim.control.style.position = 'fixed';
-    idim.control.style.top = '100%';
-    idim.control.style.right = 0;
-    idim.control.style.bottom = 0;
-    idim.control.style.left = '50%';
-    idim.control.style.margin = 0;
-    idim.control.style.marginTop = -idim.control.offsetHeight / 2 + 'px';
-    idim.control.style.marginLeft = -idim.control.offsetWidth / 2 + 'px';
+    control.style.position = 'fixed';
+    control.style.top = '100%';
+    control.style.right = 0;
+    control.style.bottom = 0;
+    control.style.left = '50%';
+    control.style.margin = 0;
+    control.style.marginTop = -control.offsetHeight / 2 + 'px';
+    control.style.marginLeft = -control.offsetWidth / 2 + 'px';
 
-    idim.control.addEventListener('touchmove', function(e) {
-      var touch = e.changedTouches[0];
-
-      e.preventDefault();
-
-      idim.control.style.top = touch.clientY + 'px';
-      idim.control.style.left = touch.clientX + 'px';
-    }, false);
+    // Add event listeners
+    control.addEventListener('touchstart', onTouchStart, false);
+    control.addEventListener('touchmove', onTouchMove, false);
+    control.addEventListener('touchend', onTouchEnd, false);
+    control.addEventListener('touchcancel', onTouchEnd, false);
 
     return this;
   };
 
-  Interdimensional.prototype.jump = function() {
+  Interdimensional.jump = function() {
+    if (!isCharged) {
+      return this;
+    }
+
     return this;
   };
 
-  Interdimensional.prototype.kick = function() {
+  Interdimensional.kick = function() {
+    if (!isCharged) {
+      return this;
+    }
+
     return this;
   };
 
-  Interdimensional.prototype.discharge = function() {
+  Interdimensional.discharge = function() {
+    if (!isCharged) {
+      return this;
+    }
+
     return this;
   };
 
-  window.Interdimensional = window.Interdimensional || new Interdimensional();
+  window.Interdimensional = Interdimensional;
 })(window, document);

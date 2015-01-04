@@ -1,10 +1,44 @@
 .interdimensional-control {
   z-index: 10000;
 
-  width: 150px;
-  height: 150px;
+  width: 120px;
+  height: 120px;
 
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.05);
-  transition: background 0.3s ease-out;
+  background: rgba(0, 0, 0, 0.1);
+  transition: transform 0.1s ease-out;
+  transform: scale(1) translateZ(0);
+}
+
+.interdimensional-control.interdimensional-control-is-active {
+  background: rgba(244, 67, 54, 0.5);
+  transform: scale(0.8);
+}
+
+.interdimensional-control:before {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  content: '';
+
+  border-radius: 50%;
+}
+
+.interdimensional-control.interdimensional-control-is-active:before {
+  background: rgba(244, 67, 54, 0.5);
+  animation: interdimensional-control-keyframes 1s ease-out infinite;
+}
+
+@keyframes interdimensional-control-keyframes {
+  60%,
+  100% {
+    background: rgba(244, 67, 54, 0);
+    transform: scale(1.2);
+  }
 }
