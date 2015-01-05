@@ -4,11 +4,11 @@
   var isCharged = false;
   var control;
 
-  function onTouchStart() {
+  function handleTouchStartEvent() {
     control.classList.add('interdimensional-control-is-active');
   }
 
-  function onTouchMove(e) {
+  function handleTouchMoveEvent(e) {
     var touch = e.changedTouches[0];
 
     e.preventDefault();
@@ -17,7 +17,7 @@
     control.style.left = touch.clientX + 'px';
   }
 
-  function onTouchEnd() {
+  function handleTouchEndEvent() {
     control.classList.remove('interdimensional-control-is-active');
   }
 
@@ -45,10 +45,10 @@
     control.style.marginLeft = -control.offsetWidth / 2 + 'px';
 
     // Add event listeners
-    control.addEventListener('touchstart', onTouchStart, false);
-    control.addEventListener('touchmove', onTouchMove, false);
-    control.addEventListener('touchend', onTouchEnd, false);
-    control.addEventListener('touchcancel', onTouchEnd, false);
+    control.addEventListener('touchstart', handleTouchStartEvent, false);
+    control.addEventListener('touchmove', handleTouchMoveEvent, false);
+    control.addEventListener('touchend', handleTouchEndEvent, false);
+    control.addEventListener('touchcancel', handleTouchEndEvent, false);
 
     return this;
   };
