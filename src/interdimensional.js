@@ -2,13 +2,30 @@
   'use strict';
 
   var isCharged = false;
+  var isOn = false;
+  var lastAlpha;
+  var lastBeta;
   var control;
+  var settings = {
+    speed: 200,
+    insensitivity: 3
+  };
+
+  function calcShift(lastAngle, newAngle) {
+    return Math.abs(newAngle - lastAngle) > settings.insensitivity ?
+      settings.speed * (newAngle / lastAngle - 1) : 0;
+  }
 
   function handleTouchStartEvent() {
+    isOn = true;
     control.classList.add('interdimensional-control-is-active');
   }
 
   function handleTouchMoveEvent(e) {
+    if (!isOn) {
+      return;
+    }
+
     var touch = e.changedTouches[0];
 
     e.preventDefault();
@@ -18,7 +35,20 @@
   }
 
   function handleTouchEndEvent() {
+    isOn = false;
     control.classList.remove('interdimensional-control-is-active');
+  }
+
+  function handleDeviceOrientationEvent(e) {
+    if (!isOn) {
+      lastAlpha = e.alpha;
+      lastBeta = e.beta;
+    } else {
+      window.scrollBy(
+        calcShift(lastAlpha, e.alpha),
+        calcShift(lastBeta, e.beta)
+      );
+    }
   }
 
   function Interdimensional() {}
@@ -49,6 +79,7 @@
     control.addEventListener('touchmove', handleTouchMoveEvent, false);
     control.addEventListener('touchend', handleTouchEndEvent, false);
     control.addEventListener('touchcancel', handleTouchEndEvent, false);
+    window.addEventListener('deviceorientation', handleDeviceOrientationEvent, false);
 
     return this;
   };
