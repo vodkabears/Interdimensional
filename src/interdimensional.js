@@ -39,41 +39,36 @@
   function Interdimensional() {}
 
   Interdimensional.charge = function() {
-    if (isCharged) {
-      return this;
+    if (!isCharged) {
+      isCharged = true;
+
+      // Create the control
+      control = document.createElement('div');
+      control.className = 'interdimensional-control';
+      document.body.appendChild(control);
+
+      // Add event listeners
+      control.addEventListener('touchstart', handleTouchStartEvent, false);
+      window.addEventListener('deviceorientation', handleDeviceOrientationEvent, false);
     }
-
-    isCharged = true;
-
-    control = document.createElement('div');
-    control.className = 'interdimensional-control';
-    document.body.appendChild(control);
-
-    // Add event listeners
-    control.addEventListener('touchstart', handleTouchStartEvent, false);
-    window.addEventListener('deviceorientation', handleDeviceOrientationEvent, false);
 
     return this;
   };
 
   Interdimensional.jump = function() {
-    if (!isCharged) {
-      return this;
+    if (isCharged) {
+      isOn = true;
+      control.classList.add('interdimensional-control-is-active');
     }
-
-    isOn = true;
-    control.classList.add('interdimensional-control-is-active');
 
     return this;
   };
 
   Interdimensional.kick = function() {
-    if (!isCharged) {
-      return this;
+    if (isCharged) {
+      isOn = false;
+      control.classList.remove('interdimensional-control-is-active');
     }
-
-    isOn = false;
-    control.classList.remove('interdimensional-control-is-active');
 
     return this;
   };
@@ -83,16 +78,14 @@
   };
 
   Interdimensional.discharge = function() {
-    if (!isCharged) {
-      return this;
+    if (isCharged) {
+      Interdimensional.kick();
+
+      isCharged = false;
+      document.body.removeChild(control);
+      control.removeEventListener('touchstart', handleTouchStartEvent, false);
+      window.removeEventListener('deviceorientation', handleDeviceOrientationEvent, false);
     }
-
-    Interdimensional.kick();
-
-    isCharged = false;
-    document.body.removeChild(control);
-    control.removeEventListener('touchstart', handleTouchStartEvent, false);
-    window.removeEventListener('deviceorientation', handleDeviceOrientationEvent, false);
 
     return this;
   };
