@@ -86,7 +86,7 @@
   }
 
   function handleDeviceOrientationEvent(e) {
-    if (!isOn) {
+    if (!isOn || (lastAlpha == null && lastBeta == null)) {
       lastAlpha = e.alpha;
       lastBeta = e.beta;
     } else {
