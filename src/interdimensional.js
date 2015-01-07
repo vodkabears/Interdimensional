@@ -7,36 +7,22 @@
   var lastBeta;
   var control;
   var settings = {
-    speed: 200,
-    insensitivity: 3
+    speed: 150,
+    insensitivity: 5
   };
 
   function calcShift(lastAngle, newAngle) {
-    return Math.abs(newAngle - lastAngle) > settings.insensitivity ?
-      settings.speed * (newAngle / lastAngle - 1) : 0;
+    var diff = newAngle - lastAngle;
+    var absDiff = Math.abs(diff);
+    var sign = diff === 0 ? 0 : diff / absDiff;
+
+    return absDiff > settings.insensitivity ?
+      settings.speed * ((newAngle - sign * settings.insensitivity) / lastAngle - 1) : 0;
   }
 
   function handleTouchStartEvent() {
-    isOn = true;
-    control.classList.add('interdimensional-control-is-active');
-  }
-
-  function handleTouchMoveEvent(e) {
-    if (!isOn) {
-      return;
-    }
-
-    var touch = e.changedTouches[0];
-
-    e.preventDefault();
-
-    control.style.top = touch.clientY + 'px';
-    control.style.left = touch.clientX + 'px';
-  }
-
-  function handleTouchEndEvent() {
-    isOn = false;
-    control.classList.remove('interdimensional-control-is-active');
+    isOn = !isOn;
+    control.classList.toggle('interdimensional-control-is-active');
   }
 
   function handleDeviceOrientationEvent(e) {
@@ -64,21 +50,8 @@
     control.className = 'interdimensional-control';
     document.body.appendChild(control);
 
-    // Set a starting position
-    control.style.position = 'fixed';
-    control.style.top = '100%';
-    control.style.right = 0;
-    control.style.bottom = 0;
-    control.style.left = '50%';
-    control.style.margin = 0;
-    control.style.marginTop = -control.offsetHeight / 2 + 'px';
-    control.style.marginLeft = -control.offsetWidth / 2 + 'px';
-
     // Add event listeners
     control.addEventListener('touchstart', handleTouchStartEvent, false);
-    control.addEventListener('touchmove', handleTouchMoveEvent, false);
-    control.addEventListener('touchend', handleTouchEndEvent, false);
-    control.addEventListener('touchcancel', handleTouchEndEvent, false);
     window.addEventListener('deviceorientation', handleDeviceOrientationEvent, false);
 
     return this;
