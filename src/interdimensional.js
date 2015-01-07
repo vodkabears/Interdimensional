@@ -87,6 +87,13 @@
       return this;
     }
 
+    Interdimensional.kick();
+
+    isCharged = false;
+    document.body.removeChild(control);
+    control.removeEventListener('touchstart', handleTouchStartEvent, false);
+    window.removeEventListener('deviceorientation', handleDeviceOrientationEvent, false);
+
     return this;
   };
 
