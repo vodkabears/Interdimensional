@@ -4,10 +4,14 @@
   width: 120px;
   height: 120px;
 
+  user-select: none;
+
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.1);
   transition: transform 0.1s ease-out;
   transform: scale(1) translateZ(0);
+
+  -webkit-touch-callout: none;
 }
 
 .interdimensional-control.interdimensional-control-is-active {
