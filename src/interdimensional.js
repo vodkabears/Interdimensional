@@ -21,8 +21,7 @@
   }
 
   function handleTouchStartEvent() {
-    isOn = !isOn;
-    control.classList.toggle('interdimensional-control-is-active');
+    Interdimensional.toggle();
   }
 
   function handleDeviceOrientationEvent(e) {
@@ -62,6 +61,9 @@
       return this;
     }
 
+    isOn = true;
+    control.classList.add('interdimensional-control-is-active');
+
     return this;
   };
 
@@ -70,7 +72,14 @@
       return this;
     }
 
+    isOn = false;
+    control.classList.remove('interdimensional-control-is-active');
+
     return this;
+  };
+
+  Interdimensional.toggle = function() {
+    return isOn ? Interdimensional.kick() : Interdimensional.jump();
   };
 
   Interdimensional.discharge = function() {
