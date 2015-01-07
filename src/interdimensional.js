@@ -1,15 +1,16 @@
 !(function(window, document) {
   'use strict';
 
+  var settings = {
+    speed: 150,
+    insensitivity: 5
+  };
+
   var isCharged = false;
   var isOn = false;
   var lastAlpha;
   var lastBeta;
   var control;
-  var settings = {
-    speed: 150,
-    insensitivity: 5
-  };
 
   /**
    * Parse a string with options
