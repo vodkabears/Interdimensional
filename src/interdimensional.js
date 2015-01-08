@@ -10,6 +10,7 @@
   var isOn = false;
   var lastAlpha;
   var lastBeta;
+  var lastGamma;
   var control;
 
   /**
@@ -89,12 +90,24 @@
     if (!isOn || (lastAlpha == null && lastBeta == null)) {
       lastAlpha = e.alpha;
       lastBeta = e.beta;
+      lastGamma = e.gamma;
     } else {
-      window.scrollBy(
-        calcShift(lastAlpha, e.alpha),
-        calcShift(lastBeta, e.beta)
-      );
+      if (window.innerHeight > window.innerWidth) {
+        window.scrollBy(
+          calcShift(lastAlpha, e.alpha),
+          calcShift(lastBeta, e.beta)
+        );
+      } else {
+        window.scrollBy(
+          calcShift(lastBeta, e.beta),
+          calcShift(lastGamma, e.gamma)
+        );
+      }
     }
+  }
+
+  function handleOrientationChangeEvent() {
+    Interdimensional.kick();
   }
 
   function handleDOMContentLoadedEvent() {
@@ -124,6 +137,7 @@
       // Add event listeners
       control.addEventListener('touchstart', handleTouchStartEvent, false);
       window.addEventListener('deviceorientation', handleDeviceOrientationEvent, false);
+      window.addEventListener('orientationchange', handleOrientationChangeEvent, false);
     }
 
     return this;
@@ -159,6 +173,7 @@
       document.body.removeChild(control);
       control.removeEventListener('touchstart', handleTouchStartEvent, false);
       window.removeEventListener('deviceorientation', handleDeviceOrientationEvent, false);
+      window.removeEventListener('orientationchange', handleOrientationChangeEvent, false);
     }
 
     return this;
