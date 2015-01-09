@@ -161,39 +161,39 @@
   };
 
   Interdimensional.jump = function() {
-    if (isCharged) {
-      isOn = true;
-      control.classList.add('interdimensional-control-is-active');
+    if (!isCharged) {
+      return;
     }
 
-    return this;
+    isOn = true;
+    control.classList.add('interdimensional-control-is-active');
   };
 
   Interdimensional.kick = function() {
-    if (isCharged) {
-      isOn = false;
-      control.classList.remove('interdimensional-control-is-active');
+    if (!isCharged) {
+      return;
     }
 
-    return this;
+    isOn = false;
+    control.classList.remove('interdimensional-control-is-active');
   };
 
   Interdimensional.toggle = function() {
-    return isOn ? Interdimensional.kick() : Interdimensional.jump();
+    isOn ? Interdimensional.kick() : Interdimensional.jump();
   };
 
   Interdimensional.discharge = function() {
-    if (isCharged) {
-      Interdimensional.kick();
-
-      isCharged = false;
-      document.body.removeChild(control);
-      control.removeEventListener('touchstart', handleTouchStartEvent, false);
-      window.removeEventListener('deviceorientation', handleDeviceOrientationEvent, false);
-      window.removeEventListener('orientationchange', handleOrientationChangeEvent, false);
+    if (!isCharged) {
+      return;
     }
 
-    return this;
+    Interdimensional.kick();
+
+    isCharged = false;
+    document.body.removeChild(control);
+    control.removeEventListener('touchstart', handleTouchStartEvent, false);
+    window.removeEventListener('deviceorientation', handleDeviceOrientationEvent, false);
+    window.removeEventListener('orientationchange', handleOrientationChangeEvent, false);
   };
 
   document.addEventListener('DOMContentLoaded', handleDOMContentLoadedEvent, false);
