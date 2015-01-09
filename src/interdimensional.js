@@ -7,11 +7,25 @@
   };
 
   var isCharged = false;
+  var isCharging = false;
   var isOn = false;
   var lastAlpha;
   var lastBeta;
   var lastGamma;
   var control;
+
+  function checkSupport(next) {
+    window.addEventListener('deviceorientation', function checkDeviceOrientationEvent(e) {
+      window.removeEventListener('deviceorientation', checkDeviceOrientationEvent, false);
+
+      // Check support of the deviceorientation event and touch events
+      if ((('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch) &&
+        (e.alpha != null || e.beta != null || e.gamma != null)) {
+
+        next();
+      }
+    }, false);
+  }
 
   /**
    * Parse a string with options
@@ -121,26 +135,29 @@
   function Interdimensional() {}
 
   Interdimensional.charge = function(options) {
-    if (!isCharged) {
-      isCharged = true;
+    if (!isCharged && !isCharging) {
+      isCharging = true;
 
-      // Set settings
-      for (var key in options) {
-        settings[key] = options[key];
-      }
+      checkSupport(function() {
+        isCharged = true;
+        isCharging = false;
 
-      // Create the control
-      control = document.createElement('div');
-      control.className = 'interdimensional-control';
-      document.body.appendChild(control);
+        // Set settings
+        for (var key in options) {
+          settings[key] = options[key];
+        }
 
-      // Add event listeners
-      control.addEventListener('touchstart', handleTouchStartEvent, false);
-      window.addEventListener('deviceorientation', handleDeviceOrientationEvent, false);
-      window.addEventListener('orientationchange', handleOrientationChangeEvent, false);
+        // Create the control
+        control = document.createElement('div');
+        control.className = 'interdimensional-control';
+        document.body.appendChild(control);
+
+        // Add event listeners
+        control.addEventListener('touchstart', handleTouchStartEvent, false);
+        window.addEventListener('deviceorientation', handleDeviceOrientationEvent, false);
+        window.addEventListener('orientationchange', handleOrientationChangeEvent, false);
+      });
     }
-
-    return this;
   };
 
   Interdimensional.jump = function() {
