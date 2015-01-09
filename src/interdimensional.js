@@ -3,7 +3,8 @@
 
   var settings = {
     speed: 150,
-    insensitivity: 5
+    insensitivity: 5,
+    useControl: true
   };
 
   var isCharged = false;
@@ -150,7 +151,7 @@
         // Create the control
         control = document.createElement('div');
         control.className = 'interdimensional-control';
-        document.body.appendChild(control);
+        settings.useControl && document.body.appendChild(control);
 
         // Add event listeners
         control.addEventListener('touchstart', handleTouchStartEvent, false);
@@ -190,7 +191,7 @@
     Interdimensional.kick();
 
     isCharged = false;
-    document.body.removeChild(control);
+    settings.useControl && document.body.removeChild(control);
     control.removeEventListener('touchstart', handleTouchStartEvent, false);
     window.removeEventListener('deviceorientation', handleDeviceOrientationEvent, false);
     window.removeEventListener('orientationchange', handleOrientationChangeEvent, false);
