@@ -1,20 +1,74 @@
 !(function(window, document) {
   'use strict';
 
+  /**
+   * Settings with default values
+   * @private
+   * @type {Object}
+   */
   var settings = {
     speed: 150,
     insensitivity: 5,
     useControl: true
   };
 
+  /**
+   * Is ready to jump?
+   * @private
+   * @type {Boolean}
+   */
   var isCharged = false;
+
+  /**
+   * Is preparing to be ready or no?
+   * @private
+   * @type {Boolean}
+   */
   var isCharging = false;
+
+  /**
+   * Is the spatial scrolling on?
+   * @private
+   * @type {Boolean}
+   */
   var isOn = false;
+
+  /**
+   * Last orientation of the device around the Z axis
+   * @see https://developer.mozilla.org/en-US/docs/Web/Events/deviceorientation
+   * @private
+   * @type {Number}
+   */
   var lastAlpha;
+
+  /**
+   * Last orientation of the device around the X axis
+   * @see https://developer.mozilla.org/en-US/docs/Web/Events/deviceorientation
+   * @private
+   * @type {Number}
+   */
   var lastBeta;
+
+  /**
+   * Last orientation of the device around the Y axis
+   * @see https://developer.mozilla.org/en-US/docs/Web/Events/deviceorientation
+   * @private
+   * @type {Number}
+   */
   var lastGamma;
+
+  /**
+   * Interdimensional controller
+   * @private
+   * @type {HTMLElement}
+   */
   var control;
 
+  /**
+   * Checks support of necessary features
+   * @private
+   * @param {Function} next
+   */
   function checkSupport(next) {
     window.addEventListener('deviceorientation', function checkDeviceOrientationEvent(e) {
       window.removeEventListener('deviceorientation', checkDeviceOrientationEvent, false);
@@ -29,10 +83,10 @@
   }
 
   /**
-   * Parse a string with options
-   * @param {String} str
-   * @returns {Object|String}
+   * Parses a string with options
    * @private
+   * @param   {String} str
+   * @returns {Object|String}
    */
   function parseOptions(str) {
     var obj = {};
@@ -88,6 +142,13 @@
     return obj;
   }
 
+  /**
+   * Calculates a number of pixels to scroll
+   * @private
+   * @param  {Number} lastAngle Last orientation
+   * @param  {Number} newAngle New orientation
+   * @return {Number} Pixels to scroll
+   */
   function calcShift(lastAngle, newAngle) {
     var diff = newAngle - lastAngle;
     var absDiff = Math.abs(diff);
@@ -97,10 +158,21 @@
       settings.speed * ((newAngle - sign * settings.insensitivity) / lastAngle - 1) : 0;
   }
 
+  /**
+   * Enables/disables the spatial scrolling
+   * @private
+   * @listens touchstart
+   */
   function handleTouchStartEvent() {
     Interdimensional.toggle();
   }
 
+  /**
+   * Scrolls the page
+   * @private
+   * @listens deviceorientation
+   * @param {Event} e
+   */
   function handleDeviceOrientationEvent(e) {
     if (!isOn || (lastAlpha == null && lastBeta == null)) {
       lastAlpha = e.alpha;
@@ -121,10 +193,20 @@
     }
   }
 
+  /**
+   * Disables the spacial scrolling
+   * @private
+   * @listens orientationchange
+   */
   function handleOrientationChangeEvent() {
     Interdimensional.kick();
   }
 
+  /**
+   * Initializes declaratively
+   * @private
+   * @listens DOMContentLoaded
+   */
   function handleDOMContentLoadedEvent() {
     var data = document.body.getAttribute('data-interdimensional');
 
@@ -133,8 +215,17 @@
     }
   }
 
+  /**
+   * @private
+   * @constructor
+   */
   function Interdimensional() {}
 
+  /**
+   * Initializes
+   * @public
+   * @param {Object} options
+   */
   Interdimensional.charge = function(options) {
     if (!isCharged && !isCharging) {
       isCharging = true;
@@ -161,6 +252,10 @@
     }
   };
 
+  /**
+   * Enables the spatial scrolling
+   * @public
+   */
   Interdimensional.jump = function() {
     if (!isCharged) {
       return;
@@ -170,6 +265,10 @@
     control.classList.add('interdimensional-control-is-active');
   };
 
+  /**
+   * Disables the spatial scrolling
+   * @public
+   */
   Interdimensional.kick = function() {
     if (!isCharged) {
       return;
@@ -179,10 +278,18 @@
     control.classList.remove('interdimensional-control-is-active');
   };
 
+  /**
+   * Toggles the spatial scrolling
+   * @public
+   */
   Interdimensional.toggle = function() {
     isOn ? Interdimensional.kick() : Interdimensional.jump();
   };
 
+  /**
+   * Destroys
+   * @public
+   */
   Interdimensional.discharge = function() {
     if (!isCharged) {
       return;
