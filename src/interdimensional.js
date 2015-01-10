@@ -299,6 +299,8 @@
 
     isCharged = false;
     settings.useControl && document.body.removeChild(control);
+
+    // Remove event listeners
     control.removeEventListener('touchstart', handleTouchStartEvent, false);
     window.removeEventListener('deviceorientation', handleDeviceOrientationEvent, false);
     window.removeEventListener('orientationchange', handleOrientationChangeEvent, false);
