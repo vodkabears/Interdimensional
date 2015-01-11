@@ -14,7 +14,7 @@
     "**/.*",
     "examples/",
     "src/",
-    "tests/",
+    "test/",
     "*.md",
     "Gruntfile.js",
     "package.json"

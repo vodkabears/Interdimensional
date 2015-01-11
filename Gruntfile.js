@@ -30,15 +30,6 @@ module.exports = function(grunt) {
       }
     },
 
-    // Connect server definitions
-    connect: {
-      server: {
-        options: {
-          port: 7770
-        }
-      }
-    },
-
     // Lint definitions
     jshint: {
       gruntfile: {
@@ -47,8 +38,8 @@ module.exports = function(grunt) {
       src: {
         src: 'src/**/*.js'
       },
-      tests: {
-        src: 'tests/**/*.js'
+      test: {
+        src: 'spec/**/*.js'
       },
       options: {
         jshintrc: '.jshintrc'
@@ -64,13 +55,24 @@ module.exports = function(grunt) {
         src: 'src/**/*.js'
       },
       test: {
-        src: 'tests/**/*.js'
+        src: 'spec/**/*.js'
       },
       options: {
         preset: 'airbnb',
         disallowMultipleVarDecl: true,
         requireMultipleVarDecl: null,
         safeContextKeyword: null
+      }
+    },
+
+    // Jasmine tests definitions
+    jasmine: {
+      test: {
+        src: 'src/**/*.js',
+        options: {
+          styles: 'src/**/*.css',
+          specs: 'spec/*.spec.js'
+        }
       }
     },
 
@@ -129,7 +131,7 @@ module.exports = function(grunt) {
   });
 
   grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-contrib-connect');
+  grunt.loadNpmTasks('grunt-contrib-jasmine');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
@@ -143,7 +145,7 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('test', [
-    'connect', 'lint'
+    'lint', 'jasmine'
   ]);
 
   grunt.registerTask('build', [
