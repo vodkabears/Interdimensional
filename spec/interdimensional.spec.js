@@ -1,5 +1,5 @@
 describe('Interdimensional', function() {
-  it('should simply be', function() {
+  it('should be', function() {
     expect(Interdimensional).not.toBeUndefined();
   });
 });

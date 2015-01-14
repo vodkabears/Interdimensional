@@ -67,17 +67,27 @@
   /**
    * Checks support of necessary features
    * @private
-   * @param {Function} next
+   * @param {Function} success
+   * @param {Function} fail
    */
-  function checkSupport(next) {
+  function checkSupport(success, fail) {
+
+    // Check the deviceorientation event and touch events
+    if (
+      !window.DeviceOrientationEvent ||
+      !(('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch)
+    ) {
+      fail();
+    }
+
+    // Check the deviceorientation event in the action
     window.addEventListener('deviceorientation', function checkDeviceOrientationEvent(e) {
       window.removeEventListener('deviceorientation', checkDeviceOrientationEvent, false);
 
-      // Check support of the deviceorientation event and touch events
-      if ((('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch) &&
-        (e.alpha != null || e.beta != null || e.gamma != null)) {
-
-        next();
+      if ((e.alpha != null || e.beta != null || e.gamma != null)) {
+        success();
+      } else {
+        fail();
       }
     }, false);
   }
@@ -156,6 +166,35 @@
 
     return absDiff > settings.insensitivity ?
       settings.speed * ((newAngle - sign * settings.insensitivity) / lastAngle - 1) : 0;
+  }
+
+  /**
+   * Triggers events
+   * @private
+   * @param {eventName} Name of an event
+   */
+  function trigger(eventName) {
+    var event;
+
+    if (!eventName) {
+      return;
+    }
+
+    // Add namespace
+    eventName = 'interdimensional:' + eventName;
+
+    if (!window.Event || typeof window.Event !== 'function') {
+
+      // The old way
+      event = document.createEvent('Event');
+      event.initEvent(eventName, true, true);
+    } else {
+
+      // The new way
+      event = new Event(eventName);
+    }
+
+    document.dispatchEvent(event);
   }
 
   /**
@@ -248,6 +287,11 @@
         control.addEventListener('touchstart', handleTouchStartEvent, false);
         window.addEventListener('deviceorientation', handleDeviceOrientationEvent, false);
         window.addEventListener('orientationchange', handleOrientationChangeEvent, false);
+
+        trigger('charge');
+      }, function() {
+        isCharging = false;
+        trigger('fail');
       });
     }
   };
@@ -263,6 +307,8 @@
 
     isOn = true;
     control.classList.add('interdimensional-control-is-active');
+
+    trigger('jump');
   };
 
   /**
@@ -276,6 +322,8 @@
 
     isOn = false;
     control.classList.remove('interdimensional-control-is-active');
+
+    trigger('kick');
   };
 
   /**
@@ -304,6 +352,8 @@
     control.removeEventListener('touchstart', handleTouchStartEvent, false);
     window.removeEventListener('deviceorientation', handleDeviceOrientationEvent, false);
     window.removeEventListener('orientationchange', handleOrientationChangeEvent, false);
+
+    trigger('discharge');
   };
 
   document.addEventListener('DOMContentLoaded', handleDOMContentLoadedEvent, false);
