@@ -78,9 +78,14 @@ module.exports = function(grunt) {
 
     // CSScomb definitions
     csscomb: {
-      all: {
+      src: {
         files: {
           'src/interdimensional.css': 'src/interdimensional.css'
+        }
+      },
+      dist: {
+        files: {
+          'dist/interdimensional.css': 'dist/interdimensional.css'
         }
       }
     },
@@ -119,7 +124,7 @@ module.exports = function(grunt) {
     watch: {
       src: {
         files: ['src/**/*', 'examples/**/*'],
-        tasks: ['csscomb', 'lint', 'build']
+        tasks: ['lint', 'build']
       },
       options: {
         spawn: false,
@@ -149,10 +154,10 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('build', [
-    'concat', 'autoprefixer', 'uglify'
+    'concat', 'autoprefixer', 'csscomb', 'uglify'
   ]);
 
   grunt.registerTask('default', [
-    'csscomb', 'test', 'build', 'githooks'
+    'test', 'build', 'githooks'
   ]);
 };
