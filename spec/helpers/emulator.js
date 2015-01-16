@@ -8,6 +8,7 @@
 
     /**
      * Original objects
+     * @private
      * @const
      * @type {Object}
      */
@@ -16,6 +17,13 @@
       Event: window.Event,
       ontouchstart: window.ontouchstart
     };
+
+    /**
+     * Id of the spammer
+     * @private
+     * @type {Number}
+     */
+    var eventsInterval;
 
     return {
 
@@ -39,6 +47,11 @@
         window.Event.prototype.beta = 1;
         window.Event.prototype.gamma = 0;
         window.ontouchstart = null;
+
+        eventsInterval && clearInterval(eventsInterval);
+        eventsInterval = setInterval(function() {
+          Emulator.trigger('deviceorientation');
+        }, 100);
       },
 
       /**
@@ -53,6 +66,8 @@
         } else {
           window.ontouchstart = ORIGINAL.ontouchstart;
         }
+
+        clearInterval(eventsInterval);
       }
     };
   })();
