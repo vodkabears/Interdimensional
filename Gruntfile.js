@@ -71,7 +71,8 @@ module.exports = function(grunt) {
         src: 'src/**/*.js',
         options: {
           styles: 'src/**/*.css',
-          specs: 'spec/*.spec.js'
+          specs: 'spec/*.spec.js',
+          helpers: 'spec/helpers/*.js'
         }
       }
     },
