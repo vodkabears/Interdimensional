@@ -171,7 +171,7 @@
   /**
    * Triggers events
    * @private
-   * @param {eventName} Name of an event
+   * @param {String} Name of an event
    */
   function trigger(eventName) {
     var event;
@@ -255,7 +255,7 @@
   }
 
   /**
-   * @private
+   * @public
    * @constructor
    */
   function Interdimensional() {}
@@ -263,6 +263,7 @@
   /**
    * Initializes
    * @public
+   * @static
    * @param {Object} options
    */
   Interdimensional.charge = function(options) {
@@ -299,6 +300,7 @@
   /**
    * Enables the spatial scrolling
    * @public
+   * @static
    */
   Interdimensional.jump = function() {
     if (!isCharged) {
@@ -314,6 +316,7 @@
   /**
    * Disables the spatial scrolling
    * @public
+   * @static
    */
   Interdimensional.kick = function() {
     if (!isCharged) {
@@ -329,6 +332,7 @@
   /**
    * Toggles the spatial scrolling
    * @public
+   * @static
    */
   Interdimensional.toggle = function() {
     isOn ? Interdimensional.kick() : Interdimensional.jump();
@@ -337,6 +341,7 @@
   /**
    * Destroys
    * @public
+   * @static
    */
   Interdimensional.discharge = function() {
     if (!isCharged) {
