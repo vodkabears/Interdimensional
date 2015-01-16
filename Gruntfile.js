@@ -124,8 +124,8 @@ module.exports = function(grunt) {
     // Run 'grunt watch' for development
     watch: {
       src: {
-        files: ['src/**/*', 'examples/**/*'],
-        tasks: ['lint', 'build']
+        files: ['src/**/*', 'spec/**/*', 'examples/**/*'],
+        tasks: ['test', 'build']
       },
       options: {
         spawn: false,
