@@ -2,11 +2,12 @@
   'use strict';
 
   /**
-   * Settings with default values
+   * Default settings
    * @private
+   * @const
    * @type {Object}
    */
-  var settings = {
+  var DEFAULT_SETTINGS = {
     speed: 150,
     insensitivity: 5,
     useControl: true
@@ -56,6 +57,13 @@
    * @type {Number}
    */
   var lastGamma;
+
+  /**
+   * Current settings
+   * @private
+   * @type {Object}
+   */
+  var settings;
 
   /**
    * Interdimensional controller
@@ -275,8 +283,11 @@
         isCharging = false;
 
         // Set settings
-        for (var key in options) {
-          settings[key] = options[key];
+        settings = {};
+        for (var key in DEFAULT_SETTINGS) {
+          options && typeof options[key] !== 'undefined' ?
+            settings[key] = options[key] :
+            settings[key] = DEFAULT_SETTINGS[key];
         }
 
         // Create the control
