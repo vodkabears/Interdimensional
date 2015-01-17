@@ -8,7 +8,7 @@
    * @type {Object}
    */
   var DEFAULT_SETTINGS = {
-    speed: 150,
+    ppd: 2,
     insensitivity: 5,
     useControl: true
   };
@@ -173,7 +173,7 @@
     var sign = diff === 0 ? 0 : diff / absDiff;
 
     return absDiff > settings.insensitivity ?
-      settings.speed * ((newAngle - sign * settings.insensitivity) / lastAngle - 1) : 0;
+      settings.ppd * (diff - sign * settings.insensitivity) : 0;
   }
 
   /**
