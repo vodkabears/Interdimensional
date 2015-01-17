@@ -128,6 +128,43 @@ describe('Interdimensional', function() {
     });
   });
 
+  describe('#toggle', function() {
+    beforeEach(function(done) {
+      Emulator.emulate();
+
+      document.addEventListener('interdimensional:charge', function handleCharge() {
+        document.removeEventListener('interdimensional:charge', handleCharge, false);
+
+        done();
+      }, false);
+
+      Interdimensional.charge();
+    });
+
+    afterEach(function() {
+      Emulator.restore();
+      Interdimensional.discharge();
+    });
+
+    it('should toggle', function(done) {
+      document.addEventListener('interdimensional:jump', function handleKick() {
+        document.removeEventListener('interdimensional:jump', handleKick, false);
+        Interdimensional.toggle();
+
+        document.addEventListener('interdimensional:kick', function handleKick() {
+          document.removeEventListener('interdimensional:kick', handleKick, false);
+
+          expect(true).toBe(true);
+          done();
+        }, false);
+
+        done();
+      }, false);
+
+      Interdimensional.toggle();
+    });
+  });
+
   describe('#discharge', function() {
     var isDischarged = false;
 
