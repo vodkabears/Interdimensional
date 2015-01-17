@@ -91,6 +91,43 @@ describe('Interdimensional', function() {
     });
   });
 
+  describe('#kick', function() {
+    beforeEach(function(done) {
+      Emulator.emulate();
+
+      document.addEventListener('interdimensional:charge', function handleCharge() {
+        document.removeEventListener('interdimensional:charge', handleCharge, false);
+        Interdimensional.jump();
+
+        done();
+      }, false);
+
+      Interdimensional.charge();
+    });
+
+    afterEach(function() {
+      Emulator.restore();
+      Interdimensional.discharge();
+    });
+
+    it('should kick', function(done) {
+      document.addEventListener('interdimensional:kick', function handleKick() {
+        document.removeEventListener('interdimensional:kick', handleKick, false);
+
+        expect(
+          document
+            .querySelector('.interdimensional-control')
+              .classList
+                .contains('interdimensional-control-is-active')
+        ).toBe(false);
+
+        done();
+      }, false);
+
+      Interdimensional.kick();
+    });
+  });
+
   describe('#discharge', function() {
     var isDischarged = false;
 
