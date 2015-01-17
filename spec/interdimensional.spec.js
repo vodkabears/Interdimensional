@@ -55,6 +55,42 @@ describe('Interdimensional', function() {
     });
   });
 
+  describe('#jump', function() {
+    beforeEach(function(done) {
+      Emulator.emulate();
+
+      document.addEventListener('interdimensional:charge', function handleCharge() {
+        document.removeEventListener('interdimensional:charge', handleCharge, false);
+
+        done();
+      }, false);
+
+      Interdimensional.charge();
+    });
+
+    afterEach(function() {
+      Emulator.restore();
+      Interdimensional.discharge();
+    });
+
+    it('should jump', function(done) {
+      document.addEventListener('interdimensional:jump', function handleJump() {
+        document.removeEventListener('interdimensional:jump', handleJump, false);
+
+        expect(
+          document
+            .querySelector('.interdimensional-control')
+              .classList
+                .contains('interdimensional-control-is-active')
+        ).toBe(true);
+
+        done();
+      }, false);
+
+      Interdimensional.jump();
+    });
+  });
+
   describe('#discharge', function() {
     var isDischarged = false;
 
