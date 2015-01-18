@@ -1,46 +1,27 @@
 describe('Interdimensional', function() {
-  it('should be', function() {
-    expect(Interdimensional).toBeDefined();
+  it('should exist', function() {
+    expect(Interdimensional).to.exist();
   });
 
   describe('#charge', function() {
     describe('when some necessary features are unsupported by a browser', function() {
-      var isFailed = false;
-
-      beforeEach(function(done) {
-        document.addEventListener('interdimensional:fail', function handleFail() {
-          isFailed = true;
-          document.removeEventListener('interdimensional:fail', handleFail, false);
-
-          done();
-        }, false);
-
-        Interdimensional.charge();
-      });
-
       afterEach(function() {
         Interdimensional.discharge();
       });
 
-      it('should be failed', function() {
-        expect(isFailed).toBe(true);
-      });
-    });
-
-    describe('when all necessary features are supported by a browser', function() {
-      var isCharged = false;
-
-      beforeEach(function(done) {
-        Emulator.emulate();
-
-        document.addEventListener('interdimensional:charge', function handleCharge() {
-          isCharged = true;
-          document.removeEventListener('interdimensional:charge', handleCharge, false);
-
+      it('should be failed', function(done) {
+        document.addEventListener('interdimensional:fail', function handleFail() {
+          document.removeEventListener('interdimensional:fail', handleFail, false);
           done();
         }, false);
 
         Interdimensional.charge();
+      });
+    });
+
+    describe('when all necessary features are supported by a browser', function() {
+      beforeEach(function() {
+        Emulator.emulate();
       });
 
       afterEach(function() {
@@ -48,9 +29,26 @@ describe('Interdimensional', function() {
         Interdimensional.discharge();
       });
 
-      it('should be charged', function() {
-        expect(isCharged).toBe(true);
-        expect(document.querySelector('.interdimensional-control')).not.toBeNull();
+      it('should be charged', function(done) {
+        document.addEventListener('interdimensional:charge', function handleCharge() {
+          document.removeEventListener('interdimensional:charge', handleCharge, false);
+          expect(document.querySelector('.interdimensional-control')).not.to.be.null();
+          done();
+        }, false);
+
+        Interdimensional.charge();
+      });
+
+      it('should be charged with settings', function(done) {
+        document.addEventListener('interdimensional:charge', function handleCharge() {
+          document.removeEventListener('interdimensional:charge', handleCharge, false);
+          expect(document.querySelector('.interdimensional-control')).to.be.null();
+          done();
+        }, false);
+
+        Interdimensional.charge({
+          useControl: false
+        });
       });
     });
   });
@@ -64,11 +62,10 @@ describe('Interdimensional', function() {
 
       document.addEventListener('interdimensional:charge', function handleCharge() {
         document.removeEventListener('interdimensional:charge', handleCharge, false);
-
         done();
       }, false);
 
-      spyOn(window, 'scrollBy').and.callFake(function(x, y) {
+      sinon.stub(window, 'scrollBy', function(x, y) {
         scrollTop += x;
         scrollLeft += y;
       });
@@ -77,7 +74,7 @@ describe('Interdimensional', function() {
     });
 
     afterEach(function() {
-      window.scrollBy.and.stub();
+      window.scrollBy.restore();
       Emulator.restore();
       Interdimensional.discharge();
     });
@@ -91,7 +88,7 @@ describe('Interdimensional', function() {
             .querySelector('.interdimensional-control')
               .classList
                 .contains('interdimensional-control-is-active')
-        ).toBe(true);
+        ).to.be.true();
 
         done();
       }, false);
@@ -107,8 +104,8 @@ describe('Interdimensional', function() {
       }, 100);
 
       setTimeout(function() {
-        expect(scrollTop).toBeGreaterThan(0);
-        expect(scrollLeft).toBeGreaterThan(0);
+        expect(scrollTop).to.be.above(0);
+        expect(scrollLeft).to.be.above(0);
         done();
       }, 300);
     });
@@ -121,7 +118,6 @@ describe('Interdimensional', function() {
       document.addEventListener('interdimensional:charge', function handleCharge() {
         document.removeEventListener('interdimensional:charge', handleCharge, false);
         Interdimensional.jump();
-
         done();
       }, false);
 
@@ -142,7 +138,7 @@ describe('Interdimensional', function() {
             .querySelector('.interdimensional-control')
               .classList
                 .contains('interdimensional-control-is-active')
-        ).toBe(false);
+        ).to.be.false();
 
         done();
       }, false);
@@ -157,7 +153,6 @@ describe('Interdimensional', function() {
 
       document.addEventListener('interdimensional:charge', function handleCharge() {
         document.removeEventListener('interdimensional:charge', handleCharge, false);
-
         done();
       }, false);
 
@@ -170,18 +165,15 @@ describe('Interdimensional', function() {
     });
 
     it('should toggle', function(done) {
-      document.addEventListener('interdimensional:jump', function handleKick() {
-        document.removeEventListener('interdimensional:jump', handleKick, false);
-        Interdimensional.toggle();
+      document.addEventListener('interdimensional:jump', function handleJump() {
+        document.removeEventListener('interdimensional:jump', handleJump, false);
 
         document.addEventListener('interdimensional:kick', function handleKick() {
           document.removeEventListener('interdimensional:kick', handleKick, false);
-
-          expect(true).toBe(true);
           done();
         }, false);
 
-        done();
+        Interdimensional.toggle();
       }, false);
 
       Interdimensional.toggle();
@@ -189,21 +181,12 @@ describe('Interdimensional', function() {
   });
 
   describe('#discharge', function() {
-    var isDischarged = false;
-
     beforeEach(function(done) {
       Emulator.emulate();
       Interdimensional.charge();
 
       document.addEventListener('interdimensional:charge', function handleCharge() {
-        Interdimensional.discharge();
         document.removeEventListener('interdimensional:charge', handleCharge, false);
-      }, false);
-
-      document.addEventListener('interdimensional:discharge', function handleDischarge() {
-        isDischarged = true;
-        document.removeEventListener('interdimensional:discharge', handleDischarge, false);
-
         done();
       }, false);
     });
@@ -212,9 +195,14 @@ describe('Interdimensional', function() {
       Emulator.restore();
     });
 
-    it('should be discharged', function() {
-      expect(isDischarged).toBe(true);
-      expect(document.querySelector('.interdimensional-control')).toBeNull();
+    it('should be discharged', function(done) {
+      document.addEventListener('interdimensional:discharge', function handleDischarge() {
+        document.removeEventListener('interdimensional:discharge', handleDischarge, false);
+        expect(document.querySelector('.interdimensional-control')).to.be.null();
+        done();
+      }, false);
+
+      Interdimensional.discharge();
     });
   });
 });

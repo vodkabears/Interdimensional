@@ -31,5 +31,10 @@
     "gyroscope",
     "ui"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "mocha": "~2.1.0",
+    "chai": "~1.10.0",
+    "sinon": "http://sinonjs.org/releases/sinon-1.12.2.js"
+  }
 }

@@ -39,7 +39,7 @@ module.exports = function(grunt) {
         src: 'src/**/*.js'
       },
       test: {
-        src: 'spec/**/*.js'
+        src: 'test/**/*.js'
       },
       options: {
         jshintrc: '.jshintrc'
@@ -55,7 +55,7 @@ module.exports = function(grunt) {
         src: 'src/**/*.js'
       },
       test: {
-        src: 'spec/**/*.js'
+        src: 'test/**/*.js'
       },
       options: {
         preset: 'airbnb',
@@ -65,14 +65,12 @@ module.exports = function(grunt) {
       }
     },
 
-    // Jasmine tests definitions
-    jasmine: {
+    // Mocha tests definitions
+    mocha: {
       test: {
-        src: 'src/**/*.js',
+        src: 'test/**/*.html',
         options: {
-          styles: 'src/**/*.css',
-          specs: 'spec/*.spec.js',
-          helpers: 'spec/helpers/*.js'
+          run: true
         }
       }
     },
@@ -124,7 +122,7 @@ module.exports = function(grunt) {
     // Run 'grunt watch' for development
     watch: {
       src: {
-        files: ['src/**/*', 'spec/**/*', 'examples/**/*'],
+        files: ['src/**/*', 'test/**/*', 'examples/**/*'],
         tasks: ['test', 'build']
       },
       options: {
@@ -137,7 +135,6 @@ module.exports = function(grunt) {
   });
 
   grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-contrib-jasmine');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
@@ -145,13 +142,14 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-csscomb');
   grunt.loadNpmTasks('grunt-githooks');
   grunt.loadNpmTasks('grunt-jscs');
+  grunt.loadNpmTasks('grunt-mocha');
 
   grunt.registerTask('lint', [
     'jshint', 'jscs'
   ]);
 
   grunt.registerTask('test', [
-    'lint', 'jasmine'
+    'lint', 'mocha'
   ]);
 
   grunt.registerTask('build', [
