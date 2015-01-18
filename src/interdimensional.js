@@ -92,6 +92,10 @@
     window.addEventListener('deviceorientation', function checkDeviceOrientationEvent(e) {
       window.removeEventListener('deviceorientation', checkDeviceOrientationEvent, false);
 
+      if (!isCharging) {
+        return;
+      }
+
       if ((e.alpha != null || e.beta != null || e.gamma != null)) {
         success();
       } else {
