@@ -25,6 +25,17 @@
      */
     var eventsInterval;
 
+    /**
+     * Tilt of the device
+     * @private
+     * @type {Object}
+     */
+    var tilt = {
+      alpha: 0,
+      beta: 0,
+      gamma: 0
+    };
+
     return {
 
       /**
@@ -43,15 +54,30 @@
        */
       emulate: function() {
         window.DeviceOrientationEvent = function() {};
-        window.Event.prototype.alpha = 0;
-        window.Event.prototype.beta = 1;
-        window.Event.prototype.gamma = 0;
+        window.Event.prototype.alpha = tilt.alpha;
+        window.Event.prototype.beta = tilt.beta;
+        window.Event.prototype.gamma = tilt.gamma;
         window.ontouchstart = null;
 
         eventsInterval && clearInterval(eventsInterval);
         eventsInterval = setInterval(function() {
+          window.Event.prototype.alpha = tilt.alpha;
+          window.Event.prototype.beta = tilt.beta;
+          window.Event.prototype.gamma = tilt.gamma;
           Emulator.trigger('deviceorientation');
-        }, 100);
+        }, 50);
+      },
+
+      /**
+       * Set a tilt of the device
+       * @param {Number} alpha
+       * @param {Number} beta
+       * @param {Number} gamma
+       */
+      setTilt: function(alpha, beta, gamma) {
+        tilt.alpha = alpha;
+        tilt.beta = beta;
+        tilt.gamma = gamma;
       },
 
       /**
@@ -60,6 +86,9 @@
       restore: function() {
         window.DeviceOrientationEvent = ORIGINAL.DeviceOrientationEvent;
         window.Event = ORIGINAL.Event;
+        tilt.alpha = 0;
+        tilt.beta = 0;
+        tilt.gamma = 0;
 
         if (typeof ORIGINAL.ontouchstart === 'undefined') {
           delete window.ontouchstart;

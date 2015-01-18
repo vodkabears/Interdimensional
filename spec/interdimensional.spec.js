@@ -56,6 +56,9 @@ describe('Interdimensional', function() {
   });
 
   describe('#jump', function() {
+    var scrollTop = 0;
+    var scrollLeft = 0;
+
     beforeEach(function(done) {
       Emulator.emulate();
 
@@ -65,10 +68,16 @@ describe('Interdimensional', function() {
         done();
       }, false);
 
+      spyOn(window, 'scrollBy').and.callFake(function(x, y) {
+        scrollTop += x;
+        scrollLeft += y;
+      });
+
       Interdimensional.charge();
     });
 
     afterEach(function() {
+      window.scrollBy.and.stub();
       Emulator.restore();
       Interdimensional.discharge();
     });
@@ -88,6 +97,20 @@ describe('Interdimensional', function() {
       }, false);
 
       Interdimensional.jump();
+    });
+
+    it('should scroll the page', function(done) {
+      Interdimensional.jump();
+
+      setTimeout(function() {
+        Emulator.setTilt(50, 50, 50);
+      }, 100);
+
+      setTimeout(function() {
+        expect(scrollTop).toBeGreaterThan(0);
+        expect(scrollLeft).toBeGreaterThan(0);
+        done();
+      }, 300);
     });
   });
 
