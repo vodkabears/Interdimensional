@@ -221,7 +221,7 @@
    * @param {Event} e
    */
   function handleDeviceOrientationEvent(e) {
-    if (!isOn || (lastAlpha == null && lastBeta == null)) {
+    if (!isOn || (lastAlpha == null || lastBeta == null || lastGamma == null)) {
       lastAlpha = e.alpha;
       lastBeta = e.beta;
       lastGamma = e.gamma;
