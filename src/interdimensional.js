@@ -304,9 +304,11 @@
             // Set settings
             settings = {};
             for (var key in DEFAULT_SETTINGS) {
-              options && typeof options[key] !== 'undefined' ?
-                settings[key] = options[key] :
-                settings[key] = DEFAULT_SETTINGS[key];
+              if (DEFAULT_SETTINGS.hasOwnProperty(key)) {
+                options && typeof options[key] !== 'undefined' ?
+                  settings[key] = options[key] :
+                  settings[key] = DEFAULT_SETTINGS[key];
+              }
             }
 
             // Create the control
