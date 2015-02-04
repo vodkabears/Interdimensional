@@ -273,6 +273,22 @@
   function Interdimensional() {}
 
   /**
+   * @public
+   * @returns {Boolean} `isCharged` variable
+   */
+  Interdimensional.isCharged = function() {
+    return isCharged;
+  };
+
+  /**
+   * @public
+   * @returns {Boolean} `isOn` variable
+   */
+  Interdimensional.isOn = function() {
+    return isOn;
+  };
+
+  /**
    * Initializes
    * @public
    * @static
