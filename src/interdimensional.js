@@ -10,7 +10,7 @@
      * @type {Object}
      */
     var DEFAULT_SETTINGS = {
-      ppd: 2,
+      PPD: 2,
       insensitivity: 5,
       useControl: true
     };
@@ -179,7 +179,7 @@
       var sign = diff === 0 ? 0 : diff / absDiff;
 
       return absDiff > settings.insensitivity ?
-        settings.ppd * (diff - sign * settings.insensitivity) : 0;
+        settings.PPD * (diff - sign * settings.insensitivity) : 0;
     }
 
     /**
@@ -188,7 +188,7 @@
      * @param {String} Name of an event
      */
     function trigger(eventName) {
-      var event;
+      var e;
 
       if (!eventName) {
         return;
@@ -200,15 +200,15 @@
       if (!window.Event || typeof window.Event !== 'function') {
 
         // The old way
-        event = document.createEvent('Event');
-        event.initEvent(eventName, true, true);
+        e = document.createEvent('Event');
+        e.initEvent(eventName, true, true);
       } else {
 
         // The new way
-        event = new Event(eventName);
+        e = new Event(eventName);
       }
 
-      document.dispatchEvent(event);
+      document.dispatchEvent(e);
     }
 
     /**
