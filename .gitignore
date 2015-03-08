@@ -2,6 +2,3 @@
 .idea/
 node_modules/
 libs/
-
-# Remove this line later
-dist/

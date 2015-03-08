@@ -1,0 +1,88 @@
+/*
+ *  Interdimensional - v0.0.1-alpha
+ *  Spatial scrolling for your web pages.
+ *  http://vodkabears.github.io/interdimensional/
+ *
+ *  Made by Ilya Makarov <dfrost.00@gmail.com>
+ *  Under MIT License
+ */
+
+.interdimensional-control {
+  position: fixed;
+  z-index: 10000;
+  bottom: 10px;
+  left: 10px;
+
+  width: 48px;
+  height: 48px;
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  opacity: 0.3;
+  border-radius: 50%;
+  background: #fff;
+  -webkit-box-shadow: inset 0 0 0 1px #000;
+  box-shadow: inset 0 0 0 1px #000;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+
+  -webkit-touch-callout: none;
+  -ms-touch-action: none;
+}
+
+.interdimensional-control.interdimensional-control-is-active {
+  opacity: 0.3;
+  border: none;
+  background: #ff4336;
+}
+
+.interdimensional-control:before,
+.interdimensional-control:after {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  content: "";
+
+  border-radius: 50%;
+}
+
+.interdimensional-control.interdimensional-control-is-active:before {
+  opacity: 1;
+  background: #ff4336;
+  -webkit-animation: interdimensional-control-keyframes 1.2s ease-out infinite;
+  animation: interdimensional-control-keyframes 1.2s ease-out infinite;
+}
+
+.interdimensional-control:after {
+  background: url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22411%22%20height%3D%22411%22%20viewBox%3D%22-109.902%20-2.512%20411%20411%22%20enable-background%3D%22new%20-109.902%20-2.512%20411%20411%22%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%228%22%20stroke-linecap%3D%22round%22%20d%3D%22M89.22%20402L4%20231.207M89.22%20402l98-235M4%20231.207h110.72m0%200L89.22%20402m25.5-170.793L187.22%20167%22%2F%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%228%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M4%20231.207l4.046-4.43%22%2F%3E%3Cpath%20stroke-dasharray%3D%2210.708%2C10.708%22%20d%3D%22M15.267%20218.87l39.717-43.486%22%2F%3E%3Cpath%20d%3D%22M58.595%20171.43L62.64%20167%22%2F%3E%3C%2Fg%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%228%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M62.64%20167h6%22%2F%3E%3Cpath%20stroke-dasharray%3D%2212.5087%2C12.5087%22%20d%3D%22M81.15%20167h93.815%22%2F%3E%3Cpath%20d%3D%22M181.22%20167h6%22%2F%3E%3C%2Fg%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%228%22%20stroke-linecap%3D%22round%22%20d%3D%22M4%20231.207L87.22%204m100%20163L87.22%204m0%200l27.5%20227.207%22%2F%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%228%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M87.22%204l-.895%205.933%22%2F%3E%3Cpath%20stroke-dasharray%3D%2211.7571%2C11.7571%22%20d%3D%22M84.572%2021.56l-20.16%20133.694%22%2F%3E%3Cpath%20d%3D%22M63.536%20161.067L62.64%20167%22%2F%3E%3C%2Fg%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%228%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M62.64%20167l.675%205.962%22%2F%3E%3Cpath%20stroke-dasharray%3D%2211.8157%2C11.8157%22%20d%3D%22M64.643%20184.703L87.88%20390.168%22%2F%3E%3Cpath%20d%3D%22M88.545%20396.038L89.22%20402%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E) no-repeat;
+  background-position: 50% 50%;
+  -webkit-background-size: 32px 32px;
+  background-size: 32px 32px;
+}
+
+@-webkit-keyframes interdimensional-control-keyframes {
+  60%,
+  100% {
+    opacity: 0;
+    -webkit-transform: scale(1.4);
+    transform: scale(1.4);
+  }
+}
+
+@keyframes interdimensional-control-keyframes {
+  60%,
+  100% {
+    opacity: 0;
+    -webkit-transform: scale(1.4);
+    transform: scale(1.4);
+  }
+}
