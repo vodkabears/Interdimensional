@@ -83,16 +83,19 @@
     function checkSupport(success, fail) {
 
       // Check the deviceorientation event and touch events
-      if (
-        !window.DeviceOrientationEvent ||
-        !(('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch)
-      ) {
-        fail();
+      if (!('DeviceOrientationEvent' in window)) {
+        return fail();
       }
 
-      // Check the deviceorientation event in the action
-      window.addEventListener('deviceorientation', function checkDeviceOrientationEvent(e) {
-        window.removeEventListener('deviceorientation', checkDeviceOrientationEvent, false);
+      // Call fail(), if the event was not triggered
+      var failTimeout = setTimeout(function() {
+        window.removeEventListener('deviceorientation', deviceOrientationHandler, false);
+        fail();
+      }, 500);
+
+      var deviceOrientationHandler = function(e) {
+        clearTimeout(failTimeout);
+        window.removeEventListener('deviceorientation', deviceOrientationHandler, false);
 
         if (!isCharging) {
           return;
@@ -103,7 +106,10 @@
         } else {
           fail();
         }
-      }, false);
+      };
+
+      // Check the deviceorientation event in the action
+      window.addEventListener('deviceorientation', deviceOrientationHandler, false);
     }
 
     /**
