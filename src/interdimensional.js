@@ -1,6 +1,20 @@
 !(function(window, document) {
   'use strict';
 
+  /**
+   * Crossbrowser requestAnimationFrame
+   * @private
+   * @returns {Function}
+   */
+  var requestAnimationFrame = window.requestAnimationFrame ||
+    window.webkitRequestAnimationFrame ||
+    window.mozRequestAnimationFrame ||
+    window.oRequestAnimationFrame ||
+    window.msRequestAnimationFrame ||
+    function(callback) {
+      window.setTimeout(callback, 1000 / 60);
+    };
+
   var Interdimensional = (function() {
 
     /**
@@ -10,7 +24,9 @@
      * @type {Object}
      */
     var DEFAULT_SETTINGS = {
-      PPD: 2,
+
+      // Pixels per difference
+      PPD: 0.8,
       insensitivity: 5,
       useControl: true
     };
@@ -73,6 +89,20 @@
      * @type {HTMLElement}
      */
     var control;
+
+    /**
+     * Number of pixels of x-axis to scroll
+     * @private
+     * @type {Number}
+     */
+    var stepX = 0;
+
+    /**
+     * Number of pixels of y-axis to scroll
+     * @private
+     * @type {Number}
+     */
+    var stepY = 0;
 
     /**
      * Checks support of necessary features
@@ -218,6 +248,15 @@
     }
 
     /**
+     * Scrolls
+     * @private
+     */
+    function scroll() {
+      window.scrollBy(stepX, stepY);
+      isOn && requestAnimationFrame(scroll);
+    }
+
+    /**
      * Enables/disables the spatial scrolling
      * @private
      * @listens touchstart
@@ -239,15 +278,11 @@
         lastGamma = e.gamma;
       } else {
         if (window.innerHeight > window.innerWidth) {
-          window.scrollBy(
-            calcShift(lastAlpha, e.alpha),
-            calcShift(lastBeta, e.beta)
-          );
+          stepX = calcShift(lastAlpha, e.alpha);
+          stepY = calcShift(lastBeta, e.beta);
         } else {
-          window.scrollBy(
-            calcShift(lastBeta, e.beta),
-            calcShift(lastGamma, e.gamma)
-          );
+          stepX = calcShift(lastBeta, e.beta);
+          stepY = calcShift(lastGamma, e.gamma);
         }
       }
     }
@@ -346,6 +381,7 @@
 
         isOn = true;
         control.classList.add('interdimensional-control-is-active');
+        scroll();
 
         trigger('jump');
       },
@@ -360,6 +396,8 @@
         }
 
         isOn = false;
+        stepX = 0;
+        stepY = 0;
         control.classList.remove('interdimensional-control-is-active');
 
         trigger('kick');
