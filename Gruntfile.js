@@ -56,12 +56,6 @@ module.exports = function(grunt) {
       },
       test: {
         src: 'test/**/*.js'
-      },
-      options: {
-        preset: 'airbnb',
-        disallowMultipleVarDecl: true,
-        requireMultipleVarDecl: null,
-        safeContextKeyword: null
       }
     },
 
