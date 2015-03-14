@@ -279,11 +279,11 @@
         lastGamma = e.gamma;
       } else {
         if (window.innerHeight > window.innerWidth) {
-          stepX = calcShift(lastAlpha, e.alpha);
-          stepY = calcShift(lastBeta, e.beta);
+          stepX = calcShift(lastGamma, e.gamma);
+          stepY = calcShift(lastBeta, Math.abs(e.gamma) > 90 ? 180 - e.beta : e.beta);
         } else {
-          stepX = calcShift(lastBeta, e.beta);
-          stepY = calcShift(lastGamma, e.gamma);
+          stepX = calcShift(lastAlpha, e.alpha);
+          stepY = calcShift(Math.abs(lastGamma), Math.abs(e.gamma));
         }
       }
     }
