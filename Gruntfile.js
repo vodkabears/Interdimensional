@@ -1,23 +1,17 @@
 module.exports = function(grunt) {
   grunt.initConfig({
 
-    // Import package manifest
     pkg: grunt.file.readJSON('bower.json'),
 
-    // Banner definitions
-    meta: {
-      banner: '/*\n' +
-        ' *  <%= pkg.name[0].toUpperCase() + pkg.name.slice(1) %> - v<%= pkg.version %>\n' +
-        ' *  <%= pkg.description %>\n' +
-        ' *  <%= pkg.homepage %>\n' +
-        ' *\n' +
-        ' *  Made by <%= pkg.authors[0] %>\n' +
-        ' *  Under <%= pkg.license %> License\n' +
-        ' */\n' +
-        '\n'
+    autoprefixer: {
+      dist: {
+        src: 'dist/interdimensional.css'
+      },
+      options: {
+        browsers: ['> 0.1%']
+      }
     },
 
-    // Concat definitions
     concat: {
       dist: {
         files: {
@@ -30,7 +24,28 @@ module.exports = function(grunt) {
       }
     },
 
-    // Lint definitions
+    csscomb: {
+      src: {
+        files: {
+          'src/interdimensional.css': 'src/interdimensional.css'
+        }
+      },
+      dist: {
+        files: {
+          'dist/interdimensional.css': 'dist/interdimensional.css'
+        }
+      }
+    },
+
+    githooks: {
+      all: {
+        'pre-commit': 'lint'
+      },
+      options: {
+        command: './node_modules/.bin/grunt'
+      }
+    },
+
     jshint: {
       gruntfile: {
         src: 'Gruntfile.js'
@@ -46,7 +61,6 @@ module.exports = function(grunt) {
       }
     },
 
-    // JavaScript Code Style definitions
     jscs: {
       gruntfile: {
         src: 'Gruntfile.js'
@@ -59,7 +73,18 @@ module.exports = function(grunt) {
       }
     },
 
-    // Mocha tests definitions
+    meta: {
+      banner: '/*\n' +
+        ' *  <%= pkg.name[0].toUpperCase() + pkg.name.slice(1) %> - v<%= pkg.version %>\n' +
+        ' *  <%= pkg.description %>\n' +
+        ' *  <%= pkg.homepage %>\n' +
+        ' *\n' +
+        ' *  Made by <%= pkg.authors[0] %>\n' +
+        ' *  Under <%= pkg.license %> License\n' +
+        ' */\n' +
+        '\n'
+    },
+
     mocha: {
       test: {
         src: 'test/**/*.html',
@@ -69,30 +94,6 @@ module.exports = function(grunt) {
       }
     },
 
-    // CSScomb definitions
-    csscomb: {
-      src: {
-        files: {
-          'src/interdimensional.css': 'src/interdimensional.css'
-        }
-      },
-      dist: {
-        files: {
-          'dist/interdimensional.css': 'dist/interdimensional.css'
-        }
-      }
-    },
-
-    autoprefixer: {
-      dist: {
-        src: 'dist/interdimensional.css'
-      },
-      options: {
-        browsers: ['> 0.1%']
-      }
-    },
-
-    // Minify definitions
     uglify: {
       target: {
         src: 'dist/interdimensional.js',
@@ -103,17 +104,6 @@ module.exports = function(grunt) {
       }
     },
 
-    // Git hooks definitions
-    githooks: {
-      all: {
-        'pre-commit': 'lint'
-      },
-      options: {
-        command: './node_modules/.bin/grunt'
-      }
-    },
-
-    // Run 'grunt watch' for development
     watch: {
       src: {
         files: ['src/**/*', 'test/**/*', 'examples/**/*'],
