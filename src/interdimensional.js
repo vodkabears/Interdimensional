@@ -28,7 +28,8 @@
       // Pixels per difference
       PPD: 0.8,
       insensitivity: 5,
-      useControl: true
+      useControl: true,
+      control: null
     };
 
     /**
@@ -353,8 +354,14 @@
             }
 
             // Create the control
-            control = document.createElement('div');
-            control.className = 'interdimensional-control';
+            if (settings.control) {
+              control = settings.control;
+            } else {
+              control = document.createElement('div');
+              control.className = 'interdimensional-control';
+            }
+
+            // Add the control
             settings.useControl && document.body.appendChild(control);
 
             // Add event listeners
