@@ -122,7 +122,7 @@
       var failTimeout = setTimeout(function() {
         window.removeEventListener('deviceorientation', deviceOrientationHandler, false);
         fail();
-      }, 500);
+      }, 2000);
 
       var deviceOrientationHandler = function(e) {
         clearTimeout(failTimeout);
