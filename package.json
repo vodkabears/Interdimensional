@@ -49,7 +49,7 @@
     "grunt-mocha": "^0.4.12"
   },
   "scripts": {
-    "postinstall": "./node_modules/.bin/bower install; ./node_modules/.bin/grunt githooks",
+    "start": "npm install && ./node_modules/.bin/bower install && ./node_modules/.bin/grunt githooks",
     "test": "./node_modules/.bin/grunt test"
   }
 }
