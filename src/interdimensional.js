@@ -436,7 +436,7 @@
       Interdimensional.kick();
 
       isCharged = false;
-      settings.useControl && document.body.removeChild(control);
+      !settings.control && settings.useControl && document.body.removeChild(control);
 
       // Remove event listeners
       control.removeEventListener('touchstart', handleTouchStartEvent, false);
