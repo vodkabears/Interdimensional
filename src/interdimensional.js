@@ -286,7 +286,7 @@
     } else {
       if (window.innerHeight > window.innerWidth) {
         stepX = calcShift(lastGamma, e.gamma);
-        stepY = calcShift(lastBeta, Math.abs(e.gamma) > 90 ? 180 - e.beta : e.beta);
+        stepY = calcShift(lastBeta, Math.abs(e.gamma) > 90 && Math.abs(lastGamma) < 90 ? 180 - e.beta : e.beta);
       } else {
         stepX = calcShift(lastAlpha, e.alpha);
         stepY = calcShift(Math.abs(lastGamma), Math.abs(e.gamma));
