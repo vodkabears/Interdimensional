@@ -7,399 +7,452 @@
  *  Under MIT License
  */
 
-!(function(window, document) {
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory();
+  } else {
+    root.Interdimensional = factory();
+  }
+})(this, function() {
   'use strict';
 
-  var Interdimensional = (function() {
-
-    /**
-     * Default settings
-     * @private
-     * @const
-     * @type {Object}
-     */
-    var DEFAULT_SETTINGS = {
-      PPD: 2,
-      insensitivity: 5,
-      useControl: true
+  /**
+   * Crossbrowser requestAnimationFrame
+   * @private
+   * @returns {Function}
+   */
+  var requestAnimationFrame = window.requestAnimationFrame ||
+    window.webkitRequestAnimationFrame ||
+    window.mozRequestAnimationFrame ||
+    window.oRequestAnimationFrame ||
+    window.msRequestAnimationFrame ||
+    function(callback) {
+      setTimeout(callback, 1000 / 60);
     };
 
-    /**
-     * Is ready to jump?
-     * @private
-     * @type {Boolean}
-     */
-    var isCharged = false;
+  /**
+   * Default settings
+   * @private
+   * @const
+   * @type {Object}
+   */
+  var DEFAULT_SETTINGS = {
 
-    /**
-     * Is preparing to be ready or no?
-     * @private
-     * @type {Boolean}
-     */
-    var isCharging = false;
+    // Pixels per difference
+    PPD: 0.8,
+    insensitivity: 5,
+    useControl: true,
+    control: null
+  };
 
-    /**
-     * Is the spatial scrolling on?
-     * @private
-     * @type {Boolean}
-     */
-    var isOn = false;
+  /**
+   * Is ready to jump?
+   * @private
+   * @type {Boolean}
+   */
+  var isCharged = false;
 
-    /**
-     * Last orientation of the device around the Z axis
-     * @see https://developer.mozilla.org/en-US/docs/Web/Events/deviceorientation
-     * @private
-     * @type {Number}
-     */
-    var lastAlpha;
+  /**
+   * Is preparing to be ready or no?
+   * @private
+   * @type {Boolean}
+   */
+  var isCharging = false;
 
-    /**
-     * Last orientation of the device around the X axis
-     * @see https://developer.mozilla.org/en-US/docs/Web/Events/deviceorientation
-     * @private
-     * @type {Number}
-     */
-    var lastBeta;
+  /**
+   * Is the spatial scrolling on?
+   * @private
+   * @type {Boolean}
+   */
+  var isOn = false;
 
-    /**
-     * Last orientation of the device around the Y axis
-     * @see https://developer.mozilla.org/en-US/docs/Web/Events/deviceorientation
-     * @private
-     * @type {Number}
-     */
-    var lastGamma;
+  /**
+   * Last orientation of the device around the Z axis
+   * @see https://developer.mozilla.org/en-US/docs/Web/Events/deviceorientation
+   * @private
+   * @type {Number}
+   */
+  var lastAlpha;
 
-    /**
-     * Current settings
-     * @private
-     * @type {Object}
-     */
-    var settings;
+  /**
+   * Last orientation of the device around the X axis
+   * @see https://developer.mozilla.org/en-US/docs/Web/Events/deviceorientation
+   * @private
+   * @type {Number}
+   */
+  var lastBeta;
 
-    /**
-     * Interdimensional controller
-     * @private
-     * @type {HTMLElement}
-     */
-    var control;
+  /**
+   * Last orientation of the device around the Y axis
+   * @see https://developer.mozilla.org/en-US/docs/Web/Events/deviceorientation
+   * @private
+   * @type {Number}
+   */
+  var lastGamma;
 
-    /**
-     * Checks support of necessary features
-     * @private
-     * @param {Function} success
-     * @param {Function} fail
-     */
-    function checkSupport(success, fail) {
+  /**
+   * Current settings
+   * @private
+   * @type {Object}
+   */
+  var settings;
 
-      // Check the deviceorientation event and touch events
-      if (
-        !window.DeviceOrientationEvent ||
-        !(('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch)
-      ) {
-        fail();
-      }
+  /**
+   * Interdimensional controller
+   * @private
+   * @type {HTMLElement}
+   */
+  var control;
 
-      // Check the deviceorientation event in the action
-      window.addEventListener('deviceorientation', function checkDeviceOrientationEvent(e) {
-        window.removeEventListener('deviceorientation', checkDeviceOrientationEvent, false);
+  /**
+   * Number of pixels of x-axis to scroll
+   * @private
+   * @type {Number}
+   */
+  var stepX = 0;
 
-        if (!isCharging) {
-          return;
-        }
+  /**
+   * Number of pixels of y-axis to scroll
+   * @private
+   * @type {Number}
+   */
+  var stepY = 0;
 
-        if ((e.alpha != null || e.beta != null || e.gamma != null)) {
-          success();
-        } else {
-          fail();
-        }
-      }, false);
+  /**
+   * Checks support of necessary features
+   * @private
+   * @param {Function} success
+   * @param {Function} fail
+   */
+  function checkSupport(success, fail) {
+
+    // Check the deviceorientation event and touch events
+    if (!('DeviceOrientationEvent' in window)) {
+      return fail();
     }
 
-    /**
-     * Parses a string with options
-     * @private
-     * @param   {String} str
-     * @returns {Object|String}
-     */
-    function parseOptions(str) {
-      var obj = {};
-      var delimiterIndex;
-      var option;
-      var prop;
-      var val;
-      var arr;
-      var len;
-      var i;
+    // Call fail(), if the event was not triggered
+    var failTimeout = setTimeout(function() {
+      window.removeEventListener('deviceorientation', deviceOrientationHandler, false);
+      fail();
+    }, 2000);
 
-      // remove spaces around delimiters and split
-      arr = str.replace(/\s*:\s*/g, ':').replace(/\s*,\s*/g, ',').split(',');
+    var deviceOrientationHandler = function(e) {
+      clearTimeout(failTimeout);
+      window.removeEventListener('deviceorientation', deviceOrientationHandler, false);
 
-      // parse a string
-      for (i = 0, len = arr.length; i < len; i++) {
-        option = arr[i];
-
-        // Ignore urls and a string without colon delimiters
-        if (option.search(/^(http|https|ftp):\/\//) !== -1 ||
-          option.search(':') === -1) {
-
-          break;
-        }
-
-        delimiterIndex = option.indexOf(':');
-        prop = option.substring(0, delimiterIndex);
-        val = option.substring(delimiterIndex + 1);
-
-        // if val is an empty string, make it undefined
-        if (!val) {
-          val = undefined;
-        }
-
-        // convert a string value if it is like a boolean
-        if (typeof val === 'string') {
-          val = val === 'true' || (val === 'false' ? false : val);
-        }
-
-        // convert a string value if it is like a number
-        if (typeof val === 'string') {
-          val = !isNaN(val) ? +val : val;
-        }
-
-        obj[prop] = val;
-      }
-
-      // if nothing is parsed
-      if (prop == null && val == null) {
-        return str;
-      }
-
-      return obj;
-    }
-
-    /**
-     * Calculates a number of pixels to scroll
-     * @private
-     * @param  {Number} lastAngle Last orientation
-     * @param  {Number} newAngle New orientation
-     * @return {Number} Pixels to scroll
-     */
-    function calcShift(lastAngle, newAngle) {
-      var diff = newAngle - lastAngle;
-      var absDiff = Math.abs(diff);
-      var sign = diff === 0 ? 0 : diff / absDiff;
-
-      return absDiff > settings.insensitivity ?
-        settings.PPD * (diff - sign * settings.insensitivity) : 0;
-    }
-
-    /**
-     * Triggers events
-     * @private
-     * @param {String} Name of an event
-     */
-    function trigger(eventName) {
-      var e;
-
-      if (!eventName) {
+      if (!isCharging) {
         return;
       }
 
-      // Add namespace
-      eventName = 'interdimensional:' + eventName;
-
-      if (!window.Event || typeof window.Event !== 'function') {
-
-        // The old way
-        e = document.createEvent('Event');
-        e.initEvent(eventName, true, true);
+      if ((e.alpha != null || e.beta != null || e.gamma != null)) {
+        success();
       } else {
-
-        // The new way
-        e = new Event(eventName);
-      }
-
-      document.dispatchEvent(e);
-    }
-
-    /**
-     * Enables/disables the spatial scrolling
-     * @private
-     * @listens touchstart
-     */
-    function handleTouchStartEvent() {
-      Interdimensional.toggle();
-    }
-
-    /**
-     * Scrolls the page
-     * @private
-     * @listens deviceorientation
-     * @param {Event} e
-     */
-    function handleDeviceOrientationEvent(e) {
-      if (!isOn || (lastAlpha == null || lastBeta == null || lastGamma == null)) {
-        lastAlpha = e.alpha;
-        lastBeta = e.beta;
-        lastGamma = e.gamma;
-      } else {
-        if (window.innerHeight > window.innerWidth) {
-          window.scrollBy(
-            calcShift(lastAlpha, e.alpha),
-            calcShift(lastBeta, e.beta)
-          );
-        } else {
-          window.scrollBy(
-            calcShift(lastBeta, e.beta),
-            calcShift(lastGamma, e.gamma)
-          );
-        }
-      }
-    }
-
-    /**
-     * Disables the spacial scrolling
-     * @private
-     * @listens orientationchange
-     */
-    function handleOrientationChangeEvent() {
-      Interdimensional.kick();
-    }
-
-    /**
-     * Initializes declaratively
-     * @private
-     * @listens DOMContentLoaded
-     */
-    function handleDOMContentLoadedEvent() {
-      var data = document.body.getAttribute('data-interdimensional');
-
-      if (data != null) {
-        Interdimensional.charge(parseOptions(data));
-      }
-    }
-
-    document.addEventListener('DOMContentLoaded', handleDOMContentLoadedEvent, false);
-
-    return {
-
-      /**
-       * @public
-       * @returns {Boolean} `isCharged` variable
-       */
-      isCharged: function() {
-        return isCharged;
-      },
-
-      /**
-       * @public
-       * @returns {Boolean} `isOn` variable
-       */
-      isOn: function() {
-        return isOn;
-      },
-
-      /**
-       * Initializes
-       * @public
-       * @param {Object} options
-       */
-      charge: function(options) {
-        if (!isCharged && !isCharging) {
-          isCharging = true;
-
-          checkSupport(function() {
-            isCharged = true;
-            isCharging = false;
-
-            // Set settings
-            settings = {};
-            for (var key in DEFAULT_SETTINGS) {
-              if (DEFAULT_SETTINGS.hasOwnProperty(key)) {
-                options && typeof options[key] !== 'undefined' ?
-                  settings[key] = options[key] :
-                  settings[key] = DEFAULT_SETTINGS[key];
-              }
-            }
-
-            // Create the control
-            control = document.createElement('div');
-            control.className = 'interdimensional-control';
-            settings.useControl && document.body.appendChild(control);
-
-            // Add event listeners
-            control.addEventListener('touchstart', handleTouchStartEvent, false);
-            window.addEventListener('deviceorientation', handleDeviceOrientationEvent, false);
-            window.addEventListener('orientationchange', handleOrientationChangeEvent, false);
-
-            trigger('charge');
-          }, function() {
-            isCharging = false;
-            trigger('fail');
-          });
-        }
-      },
-
-      /**
-       * Enables the spatial scrolling
-       * @public
-       */
-      jump: function() {
-        if (!isCharged) {
-          return;
-        }
-
-        isOn = true;
-        control.classList.add('interdimensional-control-is-active');
-
-        trigger('jump');
-      },
-
-      /**
-       * Disables the spatial scrolling
-       * @public
-       */
-      kick: function() {
-        if (!isCharged) {
-          return;
-        }
-
-        isOn = false;
-        control.classList.remove('interdimensional-control-is-active');
-
-        trigger('kick');
-      },
-
-      /**
-       * Toggles the spatial scrolling
-       * @public
-       */
-      toggle: function() {
-        isOn ? Interdimensional.kick() : Interdimensional.jump();
-      },
-
-      /**
-       * Destroys
-       * @public
-       */
-      discharge: function() {
-        if (!isCharged) {
-          return;
-        }
-
-        Interdimensional.kick();
-
-        isCharged = false;
-        settings.useControl && document.body.removeChild(control);
-
-        // Remove event listeners
-        control.removeEventListener('touchstart', handleTouchStartEvent, false);
-        window.removeEventListener('deviceorientation', handleDeviceOrientationEvent, false);
-        window.removeEventListener('orientationchange', handleOrientationChangeEvent, false);
-
-        trigger('discharge');
+        fail();
       }
     };
-  })();
 
-  window.Interdimensional = Interdimensional;
+    // Check the deviceorientation event in the action
+    window.addEventListener('deviceorientation', deviceOrientationHandler, false);
+  }
 
-})(window, document);
+  /**
+   * Parses a string with options
+   * @private
+   * @param   {String} str
+   * @returns {Object|String}
+   */
+  function parseOptions(str) {
+    var obj = {};
+    var delimiterIndex;
+    var option;
+    var prop;
+    var val;
+    var arr;
+    var len;
+    var i;
+
+    // remove spaces around delimiters and split
+    arr = str.replace(/\s*:\s*/g, ':').replace(/\s*,\s*/g, ',').split(',');
+
+    // parse a string
+    for (i = 0, len = arr.length; i < len; i++) {
+      option = arr[i];
+
+      // Ignore urls and a string without colon delimiters
+      if (option.search(/^(http|https|ftp):\/\//) !== -1 ||
+        option.search(':') === -1) {
+
+        break;
+      }
+
+      delimiterIndex = option.indexOf(':');
+      prop = option.substring(0, delimiterIndex);
+      val = option.substring(delimiterIndex + 1);
+
+      // if val is an empty string, make it undefined
+      if (!val) {
+        val = undefined;
+      }
+
+      // convert a string value if it is like a boolean
+      if (typeof val === 'string') {
+        val = val === 'true' || (val === 'false' ? false : val);
+      }
+
+      // convert a string value if it is like a number
+      if (typeof val === 'string') {
+        val = !isNaN(val) ? +val : val;
+      }
+
+      obj[prop] = val;
+    }
+
+    // if nothing is parsed
+    if (prop == null && val == null) {
+      return str;
+    }
+
+    return obj;
+  }
+
+  /**
+   * Calculates a number of pixels to scroll
+   * @private
+   * @param  {Number} lastAngle Last orientation
+   * @param  {Number} newAngle New orientation
+   * @return {Number} Pixels to scroll
+   */
+  function calcShift(lastAngle, newAngle) {
+    var diff = newAngle - lastAngle;
+    var absDiff = Math.abs(diff);
+    var sign = diff === 0 ? 0 : diff / absDiff;
+
+    return absDiff > settings.insensitivity ?
+      settings.PPD * (diff - sign * settings.insensitivity) : 0;
+  }
+
+  /**
+   * Triggers events
+   * @private
+   * @param {String} Name of an event
+   */
+  function trigger(eventName) {
+    var e;
+
+    if (!eventName) {
+      return;
+    }
+
+    // Add namespace
+    eventName = 'interdimensional:' + eventName;
+
+    if (!window.Event || typeof window.Event !== 'function') {
+
+      // The old way
+      e = document.createEvent('Event');
+      e.initEvent(eventName, true, true);
+    } else {
+
+      // The new way
+      e = new Event(eventName);
+    }
+
+    document.dispatchEvent(e);
+  }
+
+  /**
+   * Scrolls
+   * @private
+   */
+  function scroll() {
+    window.scrollBy(stepX, stepY);
+    isOn && requestAnimationFrame(scroll);
+  }
+
+  /**
+   * Enables/disables the spatial scrolling
+   * @private
+   * @listens touchstart
+   */
+  function handleTouchStartEvent() {
+    Interdimensional.toggle();
+  }
+
+  /**
+   * Scrolls the page
+   * @private
+   * @listens deviceorientation
+   * @param {Event} e
+   */
+  function handleDeviceOrientationEvent(e) {
+    if (!isOn || (lastAlpha == null || lastBeta == null || lastGamma == null)) {
+      lastAlpha = e.alpha;
+      lastBeta = e.beta;
+      lastGamma = e.gamma;
+    } else {
+      if (window.innerHeight > window.innerWidth) {
+        stepX = calcShift(lastGamma, e.gamma);
+        stepY = calcShift(lastBeta, Math.abs(e.gamma) > 90 ? 180 - e.beta : e.beta);
+      } else {
+        stepX = calcShift(lastAlpha, e.alpha);
+        stepY = calcShift(Math.abs(lastGamma), Math.abs(e.gamma));
+      }
+    }
+  }
+
+  /**
+   * Disables the spacial scrolling
+   * @private
+   * @listens orientationchange
+   */
+  function handleOrientationChangeEvent() {
+    Interdimensional.kick();
+  }
+
+  /**
+   * Initializes declaratively
+   * @private
+   * @listens DOMContentLoaded
+   */
+  function handleDOMContentLoadedEvent() {
+    var data = document.body.getAttribute('data-interdimensional');
+
+    if (data != null) {
+      Interdimensional.charge(parseOptions(data));
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', handleDOMContentLoadedEvent, false);
+
+  return {
+
+    /**
+     * @public
+     * @returns {Boolean} `isCharged` variable
+     */
+    isCharged: function() {
+      return isCharged;
+    },
+
+    /**
+     * @public
+     * @returns {Boolean} `isOn` variable
+     */
+    isOn: function() {
+      return isOn;
+    },
+
+    /**
+     * Initializes
+     * @public
+     * @param {Object} options
+     */
+    charge: function(options) {
+      if (!isCharged && !isCharging) {
+        isCharging = true;
+
+        checkSupport(function() {
+          isCharged = true;
+          isCharging = false;
+
+          // Set settings
+          settings = {};
+          for (var key in DEFAULT_SETTINGS) {
+            if (DEFAULT_SETTINGS.hasOwnProperty(key)) {
+              options && typeof options[key] !== 'undefined' ?
+                settings[key] = options[key] :
+                settings[key] = DEFAULT_SETTINGS[key];
+            }
+          }
+
+          // Create the control
+          if (settings.control) {
+            control = settings.control;
+          } else {
+            control = document.createElement('div');
+            control.className = 'interdimensional-control';
+          }
+
+          // Add the control
+          settings.useControl && document.body.appendChild(control);
+
+          // Add event listeners
+          control.addEventListener('touchstart', handleTouchStartEvent, false);
+          window.addEventListener('deviceorientation', handleDeviceOrientationEvent, false);
+          window.addEventListener('orientationchange', handleOrientationChangeEvent, false);
+
+          trigger('charge');
+        }, function() {
+          isCharging = false;
+          trigger('fail');
+        });
+      }
+    },
+
+    /**
+     * Enables the spatial scrolling
+     * @public
+     */
+    jump: function() {
+      if (!isCharged) {
+        return;
+      }
+
+      isOn = true;
+      control.classList.add('interdimensional-control-is-active');
+      scroll();
+
+      trigger('jump');
+    },
+
+    /**
+     * Disables the spatial scrolling
+     * @public
+     */
+    kick: function() {
+      if (!isCharged) {
+        return;
+      }
+
+      isOn = false;
+      stepX = 0;
+      stepY = 0;
+      control.classList.remove('interdimensional-control-is-active');
+
+      trigger('kick');
+    },
+
+    /**
+     * Toggles the spatial scrolling
+     * @public
+     */
+    toggle: function() {
+      isOn ? Interdimensional.kick() : Interdimensional.jump();
+    },
+
+    /**
+     * Destroys
+     * @public
+     */
+    discharge: function() {
+      if (!isCharged) {
+        return;
+      }
+
+      Interdimensional.kick();
+
+      isCharged = false;
+      settings.useControl && document.body.removeChild(control);
+
+      // Remove event listeners
+      control.removeEventListener('touchstart', handleTouchStartEvent, false);
+      window.removeEventListener('deviceorientation', handleDeviceOrientationEvent, false);
+      window.removeEventListener('orientationchange', handleOrientationChangeEvent, false);
+
+      trigger('discharge');
+    }
+  };
+});
