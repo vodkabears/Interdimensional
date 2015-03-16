@@ -1,6 +1,6 @@
 describe('Interdimensional', function() {
   it('should exist', function() {
-    expect(Interdimensional).to.exist();
+    expect(Interdimensional).to.exist;
   });
 
   describe('#charge', function() {
@@ -32,7 +32,7 @@ describe('Interdimensional', function() {
       it('should be charged', function(done) {
         document.addEventListener('interdimensional:charge', function handleCharge() {
           document.removeEventListener('interdimensional:charge', handleCharge, false);
-          expect(document.querySelector('.interdimensional-control')).not.to.be.null();
+          expect(document.querySelector('.interdimensional-control')).not.to.be.null;
           done();
         }, false);
 
@@ -42,7 +42,7 @@ describe('Interdimensional', function() {
       it('should be charged with settings', function(done) {
         document.addEventListener('interdimensional:charge', function handleCharge() {
           document.removeEventListener('interdimensional:charge', handleCharge, false);
-          expect(document.querySelector('.interdimensional-control')).to.be.null();
+          expect(document.querySelector('.interdimensional-control')).to.be.null;
           done();
         }, false);
 
@@ -88,7 +88,7 @@ describe('Interdimensional', function() {
             .querySelector('.interdimensional-control')
               .classList
                 .contains('interdimensional-control-is-active')
-        ).to.be.true();
+        ).to.be.true;
 
         done();
       }, false);
@@ -138,7 +138,7 @@ describe('Interdimensional', function() {
             .querySelector('.interdimensional-control')
               .classList
                 .contains('interdimensional-control-is-active')
-        ).to.be.false();
+        ).to.be.false;
 
         done();
       }, false);
@@ -198,7 +198,7 @@ describe('Interdimensional', function() {
     it('should be discharged', function(done) {
       document.addEventListener('interdimensional:discharge', function handleDischarge() {
         document.removeEventListener('interdimensional:discharge', handleDischarge, false);
-        expect(document.querySelector('.interdimensional-control')).to.be.null();
+        expect(document.querySelector('.interdimensional-control')).to.be.null;
         done();
       }, false);
 
