@@ -150,66 +150,6 @@
   }
 
   /**
-   * Parses a string with options
-   * @private
-   * @param   {String} str
-   * @returns {Object|String}
-   */
-  function parseOptions(str) {
-    var obj = {};
-    var delimiterIndex;
-    var option;
-    var prop;
-    var val;
-    var arr;
-    var len;
-    var i;
-
-    // remove spaces around delimiters and split
-    arr = str.replace(/\s*:\s*/g, ':').replace(/\s*,\s*/g, ',').split(',');
-
-    // parse a string
-    for (i = 0, len = arr.length; i < len; i++) {
-      option = arr[i];
-
-      // Ignore urls and a string without colon delimiters
-      if (option.search(/^(http|https|ftp):\/\//) !== -1 ||
-        option.search(':') === -1) {
-
-        break;
-      }
-
-      delimiterIndex = option.indexOf(':');
-      prop = option.substring(0, delimiterIndex);
-      val = option.substring(delimiterIndex + 1);
-
-      // if val is an empty string, make it undefined
-      if (!val) {
-        val = undefined;
-      }
-
-      // convert a string value if it is like a boolean
-      if (typeof val === 'string') {
-        val = val === 'true' || (val === 'false' ? false : val);
-      }
-
-      // convert a string value if it is like a number
-      if (typeof val === 'string') {
-        val = !isNaN(val) ? +val : val;
-      }
-
-      obj[prop] = val;
-    }
-
-    // if nothing is parsed
-    if (prop == null && val == null) {
-      return str;
-    }
-
-    return obj;
-  }
-
-  /**
    * Calculates a number of pixels to scroll
    * @private
    * @param  {Number} lastAngle Last orientation
@@ -302,21 +242,6 @@
   function handleOrientationChangeEvent() {
     Interdimensional.kick();
   }
-
-  /**
-   * Initializes declaratively
-   * @private
-   * @listens DOMContentLoaded
-   */
-  function handleDOMContentLoadedEvent() {
-    var data = document.body.getAttribute('data-interdimensional');
-
-    if (data != null) {
-      Interdimensional.charge(parseOptions(data));
-    }
-  }
-
-  document.addEventListener('DOMContentLoaded', handleDOMContentLoadedEvent, false);
 
   return {
 
