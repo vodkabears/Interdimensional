@@ -269,7 +269,7 @@
      * @param {Number} options.PPD Pixels per difference between tilts
      * @param {Number} options.insensitivity Minimum difference between tilts
      * @param {Boolean} options.useControl Use the control or not
-     * @param {HTMLElement|null} Interdimensional control, if null - the default control will be used
+     * @param {HTMLElement|null} options.control Interdimensional control, if null - the default control will be used
      */
     charge: function(options) {
       if (!isCharged && !isCharging) {
