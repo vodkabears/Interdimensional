@@ -103,6 +103,14 @@ Interdimensional toggle. Toggles the spatial scrolling. It is not needed, if you
 
 Interdimensional discharge. Destroys - removes event listeners, controls and etc. Triggers `interdimensional:discharge`.
 
+####Interdimensional.isCharged()
+
+Returns `true` if Interdimensional is ready.
+
+####Interdimensional.isOn()
+
+Returns `true` if Interdimensional is already scrolling the page.
+
 ##Events
 
 ####interdimensional:charge
@@ -162,7 +170,7 @@ Thanks.
 
 The MIT License (MIT)
 
-Copyright (c) 2014 Ilya Makarov
+Copyright (c) 2015 Ilya Makarov
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
