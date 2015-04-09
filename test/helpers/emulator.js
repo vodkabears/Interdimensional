@@ -53,6 +53,7 @@
        */
       emulate: function() {
         window.DeviceOrientationEvent = function() {};
+
         window.ontouchstart = null;
         window.Event.prototype.alpha = tilt.alpha;
         window.Event.prototype.beta = tilt.beta;

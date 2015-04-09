@@ -1,4 +1,4 @@
-(function(root, factory) {
+!(function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(factory);
   } else if (typeof exports === 'object') {
@@ -7,6 +7,7 @@
     root.Interdimensional = factory();
   }
 })(this, function() {
+
   'use strict';
 
   /**
@@ -305,7 +306,9 @@
           window.addEventListener('orientationchange', handleOrientationChangeEvent, false);
 
           trigger('charge');
-        }, function() {
+        },
+
+        function() {
           isCharging = false;
           trigger('fail');
         });
