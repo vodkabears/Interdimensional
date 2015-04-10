@@ -13,8 +13,7 @@
      * @type {Object}
      */
     var ORIGINAL = {
-      DeviceOrientationEvent: window.DeviceOrientationEvent,
-      ontouchstart: window.ontouchstart
+      DeviceOrientationEvent: window.DeviceOrientationEvent
     };
 
     /**
@@ -54,7 +53,6 @@
       emulate: function() {
         window.DeviceOrientationEvent = function() {};
 
-        window.ontouchstart = null;
         window.Event.prototype.alpha = tilt.alpha;
         window.Event.prototype.beta = tilt.beta;
         window.Event.prototype.gamma = tilt.gamma;
@@ -84,8 +82,10 @@
        * Turns off the emulation
        */
       restore: function() {
-        window.DeviceOrientationEvent = ORIGINAL.DeviceOrientationEvent;
-        window.ontouchstart = ORIGINAL.ontouchstart;
+        typeof ORIGINAL.DeviceOrientationEvent === 'undefined' ?
+          delete window.DeviceOrientationEvent :
+          window.DeviceOrientationEvent = ORIGINAL.DeviceOrientationEvent;
+
         delete window.Event.prototype.alpha;
         delete window.Event.prototype.beta;
         delete window.Event.prototype.gamma;
@@ -93,7 +93,7 @@
         tilt.beta = 0;
         tilt.gamma = 0;
 
-        clearInterval(eventsInterval);
+        eventsInterval && clearInterval(eventsInterval);
       }
     };
   })();

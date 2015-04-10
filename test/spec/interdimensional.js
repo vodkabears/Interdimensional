@@ -3,12 +3,29 @@ describe('Interdimensional', function() {
     expect(Interdimensional).to.exist;
   });
 
-  describe('#charge', function() {
-    describe('when some necessary features are unsupported by a browser', function() {
-      afterEach(function() {
-        Interdimensional.discharge();
-      });
+  beforeEach(function(done) {
+    Emulator.emulate();
 
+    document.addEventListener('interdimensional:charge', function handleCharge() {
+      document.removeEventListener('interdimensional:charge', handleCharge, false);
+      done();
+    }, false);
+
+    Interdimensional.charge();
+  });
+
+  afterEach(function() {
+    Emulator.restore();
+    Interdimensional.discharge();
+  });
+
+  describe('.charge(options)', function() {
+    beforeEach(function() {
+      Emulator.restore();
+      Interdimensional.discharge();
+    });
+
+    describe('when some necessary features are unsupported by a browser', function() {
       it('should be failed', function(done) {
         document.addEventListener('interdimensional:fail', function handleFail() {
           document.removeEventListener('interdimensional:fail', handleFail, false);
@@ -22,11 +39,6 @@ describe('Interdimensional', function() {
     describe('when all necessary features are supported by a browser', function() {
       beforeEach(function() {
         Emulator.emulate();
-      });
-
-      afterEach(function() {
-        Emulator.restore();
-        Interdimensional.discharge();
       });
 
       it('should be charged', function(done) {
@@ -53,30 +65,19 @@ describe('Interdimensional', function() {
     });
   });
 
-  describe('#jump', function() {
+  describe('.jump()', function() {
     var scrollTop = 0;
     var scrollLeft = 0;
 
-    beforeEach(function(done) {
-      Emulator.emulate();
-
-      document.addEventListener('interdimensional:charge', function handleCharge() {
-        document.removeEventListener('interdimensional:charge', handleCharge, false);
-        done();
-      }, false);
-
+    beforeEach(function() {
       sinon.stub(window, 'scrollBy', function(x, y) {
         scrollTop += x;
         scrollLeft += y;
       });
-
-      Interdimensional.charge();
     });
 
     afterEach(function() {
       window.scrollBy.restore();
-      Emulator.restore();
-      Interdimensional.discharge();
     });
 
     it('should jump', function(done) {
@@ -111,24 +112,7 @@ describe('Interdimensional', function() {
     });
   });
 
-  describe('#kick', function() {
-    beforeEach(function(done) {
-      Emulator.emulate();
-
-      document.addEventListener('interdimensional:charge', function handleCharge() {
-        document.removeEventListener('interdimensional:charge', handleCharge, false);
-        Interdimensional.jump();
-        done();
-      }, false);
-
-      Interdimensional.charge();
-    });
-
-    afterEach(function() {
-      Emulator.restore();
-      Interdimensional.discharge();
-    });
-
+  describe('.kick()', function() {
     it('should kick', function(done) {
       document.addEventListener('interdimensional:kick', function handleKick() {
         document.removeEventListener('interdimensional:kick', handleKick, false);
@@ -143,27 +127,12 @@ describe('Interdimensional', function() {
         done();
       }, false);
 
+      Interdimensional.jump();
       Interdimensional.kick();
     });
   });
 
-  describe('#toggle', function() {
-    beforeEach(function(done) {
-      Emulator.emulate();
-
-      document.addEventListener('interdimensional:charge', function handleCharge() {
-        document.removeEventListener('interdimensional:charge', handleCharge, false);
-        done();
-      }, false);
-
-      Interdimensional.charge();
-    });
-
-    afterEach(function() {
-      Emulator.restore();
-      Interdimensional.discharge();
-    });
-
+  describe('.toggle()', function() {
     it('should toggle', function(done) {
       document.addEventListener('interdimensional:jump', function handleJump() {
         document.removeEventListener('interdimensional:jump', handleJump, false);
@@ -180,21 +149,7 @@ describe('Interdimensional', function() {
     });
   });
 
-  describe('#discharge', function() {
-    beforeEach(function(done) {
-      Emulator.emulate();
-      Interdimensional.charge();
-
-      document.addEventListener('interdimensional:charge', function handleCharge() {
-        document.removeEventListener('interdimensional:charge', handleCharge, false);
-        done();
-      }, false);
-    });
-
-    afterEach(function() {
-      Emulator.restore();
-    });
-
+  describe('.discharge()', function() {
     it('should be discharged', function(done) {
       document.addEventListener('interdimensional:discharge', function handleDischarge() {
         document.removeEventListener('interdimensional:discharge', handleDischarge, false);
@@ -203,6 +158,29 @@ describe('Interdimensional', function() {
       }, false);
 
       Interdimensional.discharge();
+    });
+  });
+
+  describe('.isCharged()', function() {
+    it('should return true if Interdimensional is charged', function() {
+      expect(Interdimensional.isCharged()).to.be.true;
+    });
+
+    it('should return false if Interdimensional is discharged', function() {
+      Interdimensional.discharge();
+      expect(Interdimensional.isCharged()).to.be.false;
+    });
+  });
+
+  describe('.isOn()', function() {
+    it('should return true if Interdimensional is active', function() {
+      Interdimensional.jump();
+      expect(Interdimensional.isOn()).to.be.true;
+    });
+
+    it('should return false if Interdimensional is inactive', function() {
+      Interdimensional.kick();
+      expect(Interdimensional.isOn()).to.be.false;
     });
   });
 });
