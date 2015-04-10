@@ -1,5 +1,5 @@
 /*
- *  Interdimensional - v0.0.1
+ *  Interdimensional - v0.0.2
  *  Spatial scrolling for your web pages.
  *  http://vodkabears.github.io/interdimensional/
  *
@@ -7,7 +7,7 @@
  *  Under MIT License
  */
 
-(function(root, factory) {
+!(function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(factory);
   } else if (typeof exports === 'object') {
@@ -16,6 +16,7 @@
     root.Interdimensional = factory();
   }
 })(this, function() {
+
   'use strict';
 
   /**
@@ -277,7 +278,7 @@
      * @param {Number} options.PPD Pixels per difference between tilts
      * @param {Number} options.insensitivity Minimum difference between tilts
      * @param {Boolean} options.useControl Use the control or not
-     * @param {HTMLElement|null} Interdimensional control, if null - the default control will be used
+     * @param {HTMLElement|null} options.control Interdimensional control, if null - the default control will be used
      */
     charge: function(options) {
       if (!isCharged && !isCharging) {
@@ -306,7 +307,7 @@
           }
 
           // Add the control
-          settings.useControl && document.body.appendChild(control);
+          !settings.control && settings.useControl && document.body.appendChild(control);
 
           // Add event listeners
           control.addEventListener('touchstart', handleTouchStartEvent, false);
@@ -314,7 +315,9 @@
           window.addEventListener('orientationchange', handleOrientationChangeEvent, false);
 
           trigger('charge');
-        }, function() {
+        },
+
+        function() {
           isCharging = false;
           trigger('fail');
         });
