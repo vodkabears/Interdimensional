@@ -22,6 +22,7 @@
   "keywords": [
     "spatial",
     "scrolling",
+    "spatial scrolling",
     "scroll",
     "mobile",
     "device",
@@ -29,7 +30,11 @@
     "acceleration",
     "motion",
     "gyroscope",
-    "ui"
+    "ui",
+    "deviceorientation",
+    "devicemotion",
+    "device orientation",
+    "device motion"
   ],
   "license": "MIT",
   "devDependencies": {
