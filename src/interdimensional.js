@@ -298,7 +298,7 @@
           }
 
           // Add the control
-          settings.useControl && document.body.appendChild(control);
+          !settings.control && settings.useControl && document.body.appendChild(control);
 
           // Add event listeners
           control.addEventListener('touchstart', handleTouchStartEvent, false);
